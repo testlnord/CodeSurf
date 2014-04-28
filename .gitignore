@@ -5,6 +5,9 @@ __pycache__/
 #idea shit
 .idea
 
+#emacs shit
+*~
+
 # C extensions
 *.so
 
