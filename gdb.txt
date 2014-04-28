@@ -1,0 +1,729 @@
+
+Breakpoint 1, main () at main.cpp:11
+11		int a = foo(5);
+a = -1208246284
+foo (a=5) at main.cpp:3
+3		if (a < 0){
+b = 134513341
+6		int b = foo(a-1) * a;
+b = 134513341
+foo (a=4) at main.cpp:3
+3		if (a < 0){
+b = -1209765821
+6		int b = foo(a-1) * a;
+b = -1209765821
+foo (a=3) at main.cpp:3
+3		if (a < 0){
+b = -1208246284
+6		int b = foo(a-1) * a;
+b = -1208246284
+foo (a=2) at main.cpp:3
+3		if (a < 0){
+b = 134513132
+6		int b = foo(a-1) * a;
+b = 134513132
+foo (a=1) at main.cpp:3
+3		if (a < 0){
+b = -1209921192
+6		int b = foo(a-1) * a;
+b = -1209921192
+foo (a=0) at main.cpp:3
+3		if (a < 0){
+b = -1207984804
+6		int b = foo(a-1) * a;
+b = -1207984804
+foo (a=-1) at main.cpp:3
+3		if (a < 0){
+b = 0
+4			return -1;
+b = 0
+8	}
+No locals.
+7		return b;
+b = 0
+8	}
+No locals.
+7		return b;
+b = 0
+8	}
+No locals.
+7		return b;
+b = 0
+8	}
+No locals.
+7		return b;
+b = 0
+8	}
+No locals.
+7		return b;
+b = 0
+8	}
+No locals.
+7		return b;
+b = 0
+8	}
+No locals.
+main () at main.cpp:12
+12		return 0;
+a = 0
+13	}
+No locals.
+__libc_start_main (main=0x80483e1 <main()>, argc=1, ubp_av=0xbffff244, init=0x8048410 <__libc_csu_init>, fini=0x8048480 <__libc_csu_fini>, rtld_fini=0xb7fed280 <_dl_fini>, stack_end=0xbffff23c) at libc-start.c:258
+258	libc-start.c: No such file or directory.
+result = 0
+unwind_buf = {
+  cancel_jmp_buf = {{
+      jmp_buf = {-1208246284, 0, 0, 0, -1314639146, -1947306298}, 
+      mask_was_saved = 0
+    }}, 
+  priv = {
+    pad = {0x0, 0x0, 0x1, 0x8048300}, 
+    data = {
+      prev = 0x0, 
+      cleanup = 0x0, 
+      canceltype = 1
+    }
+  }
+}
+not_first_call = <optimized out>
+__GI_exit (status=0) at exit.c:99
+99	exit.c: No such file or directory.
+No locals.
+100	in exit.c
+No locals.
+__run_exit_handlers (status=0, listp=0xb7fba3e4, run_list_atexit=true) at exit.c:37
+37	in exit.c
+No locals.
+87	in exit.c
+No locals.
+42	in exit.c
+No locals.
+79	in exit.c
+atfct = <optimized out>
+onfct = <optimized out>
+cxafct = <optimized out>
+f = <optimized out>
+46	in exit.c
+No locals.
+49	in exit.c
+f = <optimized out>
+48	in exit.c
+f = <optimized out>
+50	in exit.c
+f = 0xb7fbb1e8
+48	in exit.c
+f = 0xb7fbb1e8
+50	in exit.c
+f = 0xb7fbb1e8
+74	in exit.c
+atfct = <optimized out>
+onfct = <optimized out>
+cxafct = <optimized out>
+f = 0xb7fbb1e8
+78	in exit.c
+atfct = <optimized out>
+onfct = <optimized out>
+cxafct = 0xb3e252c6
+f = 0xb7fbb1e8
+76	in exit.c
+atfct = <optimized out>
+onfct = <optimized out>
+cxafct = 0xb3e252c6
+f = 0xb7fbb1e8
+78	in exit.c
+atfct = <optimized out>
+onfct = <optimized out>
+cxafct = 0xb7fed280 <_dl_fini>
+f = 0xb7fbb1e8
+0x080484bc in _fini ()
+No symbol table info available.
+Single stepping until exit from function _fini,
+which has no line number information.
+0x08048330 in __do_global_dtors_aux ()
+No symbol table info available.
+Single stepping until exit from function __do_global_dtors_aux,
+which has no line number information.
+0x080484d1 in _fini ()
+No symbol table info available.
+Single stepping until exit from function _fini,
+which has no line number information.
+__run_exit_handlers (status=0, listp=0xb7fba3e4, run_list_atexit=true) at exit.c:79
+79	in exit.c
+atfct = <optimized out>
+onfct = <optimized out>
+cxafct = <optimized out>
+f = <optimized out>
+46	in exit.c
+No locals.
+83	in exit.c
+No locals.
+84	in exit.c
+No locals.
+83	in exit.c
+No locals.
+84	in exit.c
+No locals.
+90	in exit.c
+No locals.
+91	in exit.c
+ptr = <optimized out>
+_IO_cleanup () at genops.c:1007
+1007	genops.c: No such file or directory.
+result = <optimized out>
+1010	in genops.c
+result = <optimized out>
+_IO_flush_all_lockp (do_lock=0) at genops.c:823
+823	in genops.c
+result = 0
+fp = <optimized out>
+last_stamp = <optimized out>
+829	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = <optimized out>
+last_stamp = <optimized out>
+835	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = <optimized out>
+last_stamp = <optimized out>
+834	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = <optimized out>
+last_stamp = <optimized out>
+824	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = <optimized out>
+last_stamp = 0
+836	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = <optimized out>
+last_stamp = 0
+840	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = <optimized out>
+last_stamp = 0
+839	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fba980
+last_stamp = 0
+838	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fba980
+last_stamp = 0
+839	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fba980
+last_stamp = 0
+842	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fba980
+last_stamp = 0
+844	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fba980
+last_stamp = 0
+845	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fba980
+last_stamp = 0
+852	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fba980
+last_stamp = 0
+856	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fba980
+last_stamp = 0
+854	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fba980
+last_stamp = 0
+856	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fba980
+last_stamp = 0
+863	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fba980
+last_stamp = 0
+836	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaa20
+last_stamp = 0
+839	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaa20
+last_stamp = 0
+838	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaa20
+last_stamp = 0
+839	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaa20
+last_stamp = 0
+842	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaa20
+last_stamp = 0
+844	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaa20
+last_stamp = 0
+845	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaa20
+last_stamp = 0
+852	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaa20
+last_stamp = 0
+856	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaa20
+last_stamp = 0
+854	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaa20
+last_stamp = 0
+856	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaa20
+last_stamp = 0
+863	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaa20
+last_stamp = 0
+836	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaac0
+last_stamp = 0
+839	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaac0
+last_stamp = 0
+838	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaac0
+last_stamp = 0
+839	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaac0
+last_stamp = 0
+842	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaac0
+last_stamp = 0
+844	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaac0
+last_stamp = 0
+845	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0xb7fbaac0
+last_stamp = 0
+852	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaac0
+last_stamp = 0
+856	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaac0
+last_stamp = 0
+854	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaac0
+last_stamp = 0
+856	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaac0
+last_stamp = 0
+863	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0xb7fbaac0
+last_stamp = 0
+836	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = 0
+fp = 0x0
+last_stamp = 0
+867	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0x0
+last_stamp = 0
+869	in genops.c
+_buffer = {
+  __routine = 0xb7fff4e4 <_rtld_global+1220>, 
+  __arg = 0xb7fffa74, 
+  __canceltype = -1073745640, 
+  __prev = 0x80483d5
+}
+_avail = <optimized out>
+result = <optimized out>
+fp = 0x0
+last_stamp = 0
+873	in genops.c
+result = <optimized out>
+fp = 0x0
+last_stamp = 0
+_IO_cleanup () at genops.c:1019
+1019	in genops.c
+result = <optimized out>
+_IO_unbuffer_write () at genops.c:951
+951	in genops.c
+fp = <optimized out>
+_IO_cleanup () at genops.c:1010
+1010	in genops.c
+result = <optimized out>
+1019	in genops.c
+result = 0
+_IO_unbuffer_write () at genops.c:951
+951	in genops.c
+fp = <optimized out>
+962	in genops.c
+__self = <optimized out>
+__result = <optimized out>
+__self = <optimized out>
+cnt = <optimized out>
+fp = <optimized out>
+953	in genops.c
+fp = 0xb7fba980
+987	in genops.c
+fp = 0xb7fba980
+951	in genops.c
+fp = 0xb7fba980
+953	in genops.c
+fp = 0xb7fbaa20
+955	in genops.c
+fp = 0xb7fbaa20
+954	in genops.c
+fp = 0xb7fbaa20
+957	in genops.c
+fp = 0xb7fbaa20
+987	in genops.c
+fp = 0xb7fbaa20
+951	in genops.c
+fp = 0xb7fbaa20
+953	in genops.c
+fp = 0xb7fbaac0
+955	in genops.c
+fp = 0xb7fbaac0
+954	in genops.c
+fp = 0xb7fbaac0
+987	in genops.c
+fp = 0xb7fbaac0
+951	in genops.c
+fp = 0xb7fbaac0
+_IO_cleanup () at genops.c:1022
+1022	in genops.c
+result = 0
+__run_exit_handlers (status=0, listp=0xb7fba3e4, run_list_atexit=true) at exit.c:93
+93	exit.c: No such file or directory.
+No locals.
+_exit () at ../sysdeps/unix/sysv/linux/i386/_exit.S:25
+25	../sysdeps/unix/sysv/linux/i386/_exit.S: No such file or directory.
+No locals.
+29	in ../sysdeps/unix/sysv/linux/i386/_exit.S
+No locals.
+30	in ../sysdeps/unix/sysv/linux/i386/_exit.S
+No locals.
+[Inferior 1 (process 15028) exited normally]

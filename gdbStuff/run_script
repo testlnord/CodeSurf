@@ -1,0 +1,11 @@
+b main
+set logging on
+set pagination off	
+set $_exitcode = 777
+r
+while $_exitcode == 777
+  info local
+  step
+end
+
+quit 
