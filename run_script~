@@ -1,9 +1,0 @@
-b main
-set logging on
-$_exitcode = 777
-r
-while $_exitcode == 777
-  info local
-  s
-
-quit 
