@@ -1,9 +1,9 @@
 b main
-set logging on
-set pagination off	
+set pagination off
 set $_exitcode = 777
 r
 while $_exitcode == 777
+  info stack 1
   info local
   step
 end
