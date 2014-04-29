@@ -1,10 +1,10 @@
 __author__ = 'icemore'
 
 import random
-
+import hashlib
 
 def getColor(st):
-    h = hash(st)
+    h = int(hashlib.sha1(st).hexdigest(), 16)
     #print st+"  "+str(h)
     #r = random.random()
     #g = random.random()
