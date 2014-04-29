@@ -1,9 +1,10 @@
 import numpy as np
 import numpy.linalg as linalg
 import numpy.random
+import scipy.interpolate
 
 pointsDist = 0.2
-
+pointsInSpline = 50
 
 class GraphAlignment:
     cRep = 200
@@ -129,29 +130,47 @@ def interpolateBetweenPoints(bp, ep):
 
     return res
 
+def splineInterpolate(points, pb, mid, pe):
+    t = [pb]
+    t.extend(mid)
+
+    p = np.zeros((len(t), 3))
+    for i in range(len(t)):
+        p[i] = points[t[i]]
+
+    tck, u = scipy.interpolate.splprep(p.transpose())
+    return np.asarray(scipy.interpolate.splev(np.linspace(0, 1, pointsInSpline), tck)).transpose()
+
 
 def interpolate(points, edges):
     newEdges = {}
     for (u, v), li in edges.iteritems():
-        nli = []
-        last = u
-        for t in li:
-            newPoints = interpolateBetweenPoints(points[last], points[t])
-            n = len(points)
-            points.extend(newPoints)
-            nli.extend(range(n, n+len(newPoints)))
-            nli.append(t)
-            last = t
+        newPoints = splineInterpolate(points, u, li, v)
+        n = len(points)
+        nli = range(n, n + len(newPoints)-1)
+        nli.append(v)
+        points.extend(newPoints[:-1])
+        #last = u
+        #for t in li:
+        #    newPoints = interpolateBetweenPoints(points[last], points[t])
+        #    n = len(points)
+        #    points.extend(newPoints)
+        #    nli.extend(range(n, n+len(newPoints)))
+        #    nli.append(t)
+        #    last = t
         newEdges[(u, v)] = nli
 
     return newEdges
+
+def toTuple(p):
+    return (p[0], p[1], p[2])
 
 def get_lines(points, edges):
     lines = []
     for (u, v), li in edges.iteritems():
         last = u
         for t in li:
-            lines.append((points[last], points[t]))
+            lines.append((toTuple(points[last]), toTuple(points[t])))
             last = t
     return lines
 
