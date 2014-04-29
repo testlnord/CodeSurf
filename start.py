@@ -10,12 +10,14 @@ def main():
     log = src.gdbrer.gdblog(config.def_bin, config.gdb_script, config.logs_path)
     (graphs, steps) = src.log_parser.parse(log)
     lines = []
-    for name in graphs:
-        points, edges = align_graph(graphs[name].graph)
-        l = get_lines(points, edges)
-        lines.extend(l)
+    points, edges = align_graph(graphs['main'].graph)
+    l = get_lines(points, edges)
+    lines.extend(l)
 
-    drawLines(lines)
+    app = App()
+    app.addLines(lines)
+    app.setTrajectory(trajectory)
+    app.run()
 
 
 if __name__ == '__main__':
