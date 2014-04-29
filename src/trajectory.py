@@ -2,12 +2,12 @@ __author__ = 'arkady'
 
 
 class TrajStep:
-    def __init__(self, coord, t=False, v=False, vrs=None):
+    def __init__(self, coord, t=False, v=False, vrs=None, name=None):
         self.coord = coord
         self.t = t
         self.v = v
         self.vrs = vrs
-
+        self.name = name
 
 def make_trajectory(steps, graphs):
     real_steps = []
@@ -21,9 +21,9 @@ def make_trajectory(steps, graphs):
         if prev.fun == step.fun:
             for p in edges[(prev.line, step.line)]:
                 real_steps.append(TrajStep(points[p]))
-            real_steps.append(TrajStep(points[step.line], v=True, vrs=step.vars))
+            real_steps.append(TrajStep(points[step.line], v=True, vrs=step.vars, name=step.fun))
         else:
-            real_steps.append(TrajStep(points[step.line], t=True))
+            real_steps.append(TrajStep(points[step.line], t=True, name=step.fun))
         prev = step
 
     return real_steps
