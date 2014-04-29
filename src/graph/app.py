@@ -18,6 +18,13 @@ cameraSpeed = 0.05
 cameraRotationSpeed = 0.2
 cameraRotationSpeedEpsilon = 2
 
+def makeTorus(xc, yc, zc, xn, yn, zn):
+    m = loader.loadModel("models/Torus.egg")
+    m.set_pos(xc, yc, zc)
+
+    m.look_at(xn, yn, zn)
+    m.setHpr(m, Vec3(90, 0, 90))
+    return m
 
 def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
     ls = LineSegs()
