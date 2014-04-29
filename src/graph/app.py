@@ -5,6 +5,9 @@ from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
+from direct.particles.Particles import Particles
+from direct.particles.ParticleEffect import ParticleEffect
+from direct.particles.ForceGroup import ForceGroup
 from panda3d.core import *
 from numpy import deg2rad
 
@@ -18,7 +21,6 @@ from src.graph import primitives
 cameraSpeed = 0.05
 cameraRotationSpeed = 3
 cameraRotationSpeedEpsilon = 2
-
 
 def makeTorus(xc, yc, zc, xn, yn, zn):
     m = loader.loadModel("models/Torus.egg")
@@ -82,12 +84,45 @@ class App(ShowBase):
         self.camLens.setNear(0.01)
 
         self.disableMouse()
-        self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
+
+        self.setupLights()
+
+        self.addParticles()
 
         title = OnscreenText(text="Code visualisation",
                      style=1, fg=(1, 1, 1, 1),
                      pos=(-0.2, 0.9), scale=.07)
 
+        self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
+
+
+    def setupLights(self):
+        ambientLight = AmbientLight("ambientLight")
+        ambientLight.setColor(Vec4(.4, .4, .35, 1))
+        self.render.setLight(self.render.attachNewNode(ambientLight))
+
+    def addParticles(self):
+        base.enableParticles()
+        self.particles = ParticleEffect()
+        self.particles.loadConfig(Filename('particles/steam.ptf'))
+
+        self.particleNodePath = NodePath('gridnode')
+        self.particleNodePath.reparentTo(self.camera)
+        self.particleNodePath.setPos(0, 10, 0)
+
+        self.particles.setPos(0, 0, 0)
+        self.particles.setDepthTest(False)
+        self.particles.start(self.particleNodePath)
+
+    def updateParticles(self):
+        pass
+        #currentPosition = VBase3(self.camera.getPos())
+        #(x,y,z) = self.trajectory[self.currentTarget].coord
+        #desiredPosition = VBase3(x, y, z)
+        #dv = desiredPosition - currentPosition
+        #dv.normalize()
+        #self.particles.start(self.particleNodePath)
+        #self.particles.setPos(dv*100)
 
     def addLines(self, lines, teleports):
         for line in lines:
@@ -122,6 +157,7 @@ class App(ShowBase):
         if self.currentTarget == len(self.trajectory):
             self.currentTarget = 0
             print "END OF PROGRAM, START AGAIN"
+            #sys.exit
 
     def teleportToNext(self):
         print "Teleport to next"
@@ -133,10 +169,12 @@ class App(ShowBase):
         self.camera.lookAt(x, y, z)
 
         (r, g, b) = getColor(self.trajectory[self.currentTarget].name)
-        self.setBackgroundColor(r*0.2, g*0.2, b*0.2 )
+        self.setBackgroundColor(r*0.2, g*0.2, b*0.2)
 
 
     def moveCameraTask(self, task):
+        self.updateParticles()
+
         if self.trajectory[self.currentTarget].t == True:
             self.teleportToNext()
             return Task.cont
@@ -155,7 +193,9 @@ class App(ShowBase):
             self.aimToNextTarget()
             if self.trajectory[self.currentTarget].t == True:
                 self.teleportToNext()
-                return Task.cont
+                self.cameraSpeed = 0
+                currentPosition = VBase3(self.camera.getPos())
+                break
             (x,y,z) = self.trajectory[self.currentTarget].coord
             currentPosition = VBase3(self.camera.getPos())
             desiredPosition = VBase3(x, y, z)
