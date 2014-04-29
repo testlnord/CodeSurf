@@ -12,6 +12,9 @@ import math
 import time
 import sys, os
 
+cameraSpeed = 0.05
+cameraRotationSpeed = 1
+
 
 def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
     ls = LineSegs()
@@ -40,8 +43,8 @@ class App(ShowBase):
         self.trajectory = []
         self.currentTarget = 0
 
-        self.cameraSpeed = 0.05
-        self.cameraRotationSpeed = 1
+        self.cameraSpeed = cameraSpeed
+        self.cameraRotationSpeed = cameraRotationSpeed
 
         self.camLens.setNear(0.01)
 
