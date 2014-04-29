@@ -164,7 +164,6 @@ def get_lines(points, edges):
         for t in li:
             lines.append((toTuple(points[last]), toTuple(points[t])))
             last = t
-        lines.append((toTuple(points[last]), toTuple(points[v])))
     return lines
 
 if __name__ == '__main__':
