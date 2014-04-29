@@ -28,3 +28,5 @@ def make_trajectory(steps, graphs):
 
     return real_steps
 
+def razdvigator(points, i):
+    return [(x+i*1000, y, z+1)for (x,y,z) in points]

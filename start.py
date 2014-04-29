@@ -4,7 +4,7 @@ import src.gdbrer
 import src.log_parser
 import config
 from src.graph_alignment import align_graph, get_lines
-from src.trajectory import make_trajectory
+from src.trajectory import make_trajectory, razdvigator
 from src.graph.graph import drawLines
 from src.graph.app import App
 
@@ -14,6 +14,8 @@ def main():
     (graphs, steps) = src.log_parser.parse(log)
 
     graphs = {name: (align_graph(graphs[name].graph)) for name in graphs}
+    for i, name in enumerate(graphs):
+        graphs[name] = razdvigator(graphs[name][0], i), graphs[name][1]
 
     trajectory = make_trajectory(steps, graphs)
 
