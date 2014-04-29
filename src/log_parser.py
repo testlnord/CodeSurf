@@ -44,7 +44,7 @@ def parse(log_path):
             continue
         func_match = function.match(line)
         if func_match:
-            name = func_match.group(1)+func_match.group(2)
+            name = func_match.group(1)+": "+func_match.group(2)
             if not name in func_graphs.keys():
                 func_graphs[name] = func_graph()
 

@@ -18,13 +18,27 @@ cameraSpeed = 0.05
 cameraRotationSpeed = 2
 cameraRotationSpeedEpsilon = 4
 
+
 def makeTorus(xc, yc, zc, xn, yn, zn):
     m = loader.loadModel("models/Torus.egg")
     m.set_pos(xc, yc, zc)
 
     m.look_at(xn, yn, zn)
     m.setHpr(m, Vec3(90, 0, 90))
+    m.setColor(0, 1,0 ,1)
     return m
+
+
+def makeTeleport(xc, yc, zc, xn, yn, zn):
+    m = makeTorus(xc, yc, zc, xn, yn, zn)
+    c = loader.loadModel("models/circle.egg")
+    c.set_pos(xc, yc, zc)
+    c.look_at(xn, yn, zn)
+    c.setHpr(c, Vec3(90, 0, 90))
+    c.setColor(0.5,0,0,0.001)
+    c.setScale(m, 0.01)
+    return m,c
+
 
 def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
     ls = LineSegs()
@@ -99,7 +113,7 @@ class App(ShowBase):
         #self.camera.node().getDisplayRegion(0).setSort(20)
 
 
-    def addLines(self, lines):
+    def addLines(self, lines, teleports):
         for line in lines:
             linesegs = LineSegs("lines")
             linesegs.setColor(1, 0.5, 1, 1)
@@ -109,6 +123,12 @@ class App(ShowBase):
             node = linesegs.create(False)
             nodePath = self.render.attachNewNode(node)
             self.render.attachNewNode(makeArc(x1,y1,z1,x2,y2,z2).node())
+        for teleport in teleports:
+            (x1,y1,z1) = teleport.pos
+            (x2,y2,z2) = teleport.orient
+            m,c = makeTeleport(x1, y1, z1, x2, y2, z2)
+            m.reparentTo(self.render)
+            c.reparentTo(self.render)
         mysh = loader.loadShader("src/shaders/inkGen.sha")
         #self.render.setShader(mysh)
         #self.render.setShaderInput("separation", Vec4(0.001, 0, 0.001,0))

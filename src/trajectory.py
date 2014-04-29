@@ -1,6 +1,32 @@
 __author__ = 'arkady'
 
 
+class Teleport:
+    def __init__(self, f, t, p, n):
+        self.from_fun = f
+        self.to_fun = t
+        self.pos = p
+        self.orient = n
+
+
+def get_teleports(steps, graphs):
+    teleports = {}
+    prev = None
+    for step in steps:
+        if prev is None:
+            prev = step
+            continue
+        if prev.fun != step.fun:
+            if prev.fun not in teleports.keys():
+                teleports[prev.fun] = []
+            teleports[prev.fun].append(Teleport(prev.fun,
+                                                step.fun,
+                                                graphs[prev.fun][0][prev.line],
+                                                graphs[prev.fun][0][prev.line+1])
+            )
+        prev = step
+    return teleports
+
 class TrajStep:
     def __init__(self, coord, name,t=False, v=False, vrs=None):
         self.coord = coord
@@ -8,6 +34,7 @@ class TrajStep:
         self.v = v
         self.vrs = vrs
         self.name = name
+
 
 def make_trajectory(steps, graphs):
     real_steps = []
