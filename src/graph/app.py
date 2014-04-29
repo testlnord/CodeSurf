@@ -67,6 +67,10 @@ class App(ShowBase):
             node = linesegs.create(False)
             nodePath = self.render.attachNewNode(node)
             self.render.attachNewNode(makeArc(x1,y1,z1,x2,y2,z2).node())
+        mysh = loader.loadShader("src/shaders/inkGen.sha")
+        self.render.setShader(mysh)
+        self.render.setShaderInput("separation", Vec4(0.001, 0, 0.001,0))
+        self.render.setShaderInput("cutoff", Vec4(0.3, 0.3,0.3,0.3))
 
     def setTrajectory(self, trajectory):
         self.trajectory = trajectory
