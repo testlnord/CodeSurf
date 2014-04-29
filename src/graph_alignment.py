@@ -2,13 +2,17 @@ import numpy as np
 import numpy.linalg as linalg
 import numpy.random
 
+pointsDist = 0.2
+
+
 class GraphAlignment:
     cRep = 200
     cAttr = 0.06
     delta = 0.85
-    addOnEdges = 0
+    addOnEdges = 2
     threshold = 0.05
     maxIterations = 1000
+
 
     def build_graph(self, graph):
         n = len(graph)
@@ -20,8 +24,8 @@ class GraphAlignment:
         for tu in range(len(graph)):
             for tv in graph[tu]:
                 u, v = tu, tv
-                if u > v:
-                    u, v = v, u
+                #if u > v:
+                #    u, v = v, u
                 if (u, v) in edges:
                     continue
 
@@ -34,6 +38,7 @@ class GraphAlignment:
                     adj[last].add(cur)
                     adj.append({last})
                     last = cur
+                edges[(u, v)].append(v)
                 adj[last].add(v)
                 adj[v].add(last)
         return adj, edges
@@ -49,18 +54,18 @@ class GraphAlignment:
 
     def get_direction(self, u, v):
         vec = self.points[v] - self.points[u]
-        dist = linalg.norm(vec)
-        unit = vec / dist
+        dist2 = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]
+        #dist2 = vec.dot(vec)
 
-        return dist, unit
+        return dist2, vec
 
     def f_rep(self, u, v):
-        dist, unit = self.get_direction(v, u)
-        return self.cRep * unit / dist
+        dist2, vec = self.get_direction(v, u)
+        return self.cRep * vec / dist2
 
     def f_attr(self, u, v):
-        dist, unit = self.get_direction(u, v)
-        res = self.cAttr * dist * unit
+        dist2, vec = self.get_direction(u, v)
+        res = self.cAttr * vec
         return res
 
     def align(self):
@@ -100,13 +105,54 @@ def align_graph(graph):
     al = GraphAlignment(graph)
     points, edges = al.align()
     points = GraphAlignment.normalize_points(points)
-    return points, edges
 
+    pts = []
+    for i in xrange(len(points)):
+        pts.append(points[i])
+
+    edges = interpolate(pts, edges)
+
+    print "got points %s" % len(pts)
+    return pts, edges
+
+
+def interpolateBetweenPoints(bp, ep):
+    dist = linalg.norm(ep - bp)
+    pointsCnt = int(np.floor(dist / pointsDist))
+
+    res = np.zeros((pointsCnt, 3))
+    t = bp.copy()
+    step = (ep-bp) / pointsCnt
+    for i in range(pointsCnt):
+        t += step
+        res[i] = t
+
+    return res
+
+
+def interpolate(points, edges):
+    newEdges = {}
+    for (u, v), li in edges.iteritems():
+        nli = []
+        last = u
+        for t in li:
+            newPoints = interpolateBetweenPoints(points[last], points[t])
+            n = len(points)
+            points.extend(newPoints)
+            nli.extend(range(n, n+len(newPoints)))
+            nli.append(t)
+            last = t
+        newEdges[(u, v)] = nli
+
+    return newEdges
 
 def get_lines(points, edges):
     lines = []
-    for v, u in edges:
-        lines.append((points[v], points[u]))
+    for (u, v), li in edges.iteritems():
+        last = u
+        for t in li:
+            lines.append((points[last], points[t]))
+            last = t
     return lines
 
 if __name__ == '__main__':
