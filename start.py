@@ -24,6 +24,7 @@ def main():
         l = get_lines(graphs[name][0], graphs[name][1])
         lines.extend(l)
 
+    drawLines(lines)
     app = App()
     app.addLines(lines)
     app.setTrajectory(trajectory)

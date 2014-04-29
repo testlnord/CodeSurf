@@ -33,9 +33,8 @@ def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
 
     node = ls.create()
     res = NodePath(node)
-
-    res.look_at(xn, yn, zn)
     res.set_pos(xc, yc, zc)
+    res.look_at(xn, yn, zn)
     return res
 
 
