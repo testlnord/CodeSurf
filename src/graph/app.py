@@ -13,6 +13,7 @@ import math
 
 import time
 import sys, os
+from src.graph import primitives
 
 cameraSpeed = 0.05
 cameraRotationSpeed = 2
@@ -122,7 +123,7 @@ class App(ShowBase):
             linesegs.drawTo(x2, y2, z2)
             node = linesegs.create(False)
             nodePath = self.render.attachNewNode(node)
-            self.render.attachNewNode(makeArc(x1,y1,z1,x2,y2,z2).node())
+            self.render.attachNewNode(primitives.makeCircle(x1,y1,z1,x2,y2,z2).node())
         for teleport in teleports:
             (x1,y1,z1) = teleport.pos
             (x2,y2,z2) = teleport.orient
