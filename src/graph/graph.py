@@ -91,9 +91,9 @@ def drawLines(list1):
         linesegs.drawTo(x2, y2, z2)
         node = linesegs.create(False)
         nodePath = render.attachNewNode(node)
-
-        p1 = GTriangle(x1, y1, z1);
-        p2 = GTriangle(x2, y2, z2);
+        render.attachNewNode(makeArc(x1,y1,z1,x2,y2,z2).node())
+        #p1 = GTriangle(x1, y1, z1);
+        #p2 = GTriangle(x2, y2, z2);
 
     run()
 
