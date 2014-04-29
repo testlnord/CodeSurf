@@ -7,6 +7,8 @@ from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import *
 from numpy import deg2rad
+
+from hashing import *
 import math
 
 import time
@@ -64,6 +66,10 @@ class App(ShowBase):
 
         self.followObject1 = MockObject()
         #self.followObject1.setPos()
+        #myFog = Fog("Fog")
+        #myFog.setColor(0,0.05,0.05)
+        #myFog.setExpDensity(0.5)
+        #self.render.setFog(myFog)
 
         self.setBackgroundColor(0, 0, 0.1)
         self.render.setAntialias(AntialiasAttrib.MPolygon)
@@ -100,7 +106,7 @@ class App(ShowBase):
         for obj in trajectory:
             #obj.coord[2] += 1
             (x,y,z) = obj.coord
-            obj.coord = (x,y,z+0.1)
+            obj.coord = (x,y,z+0.05)
         self.currentTarget = 0
 
     def moveToNextTarget(self):
@@ -119,6 +125,10 @@ class App(ShowBase):
             print "TELEPORT!!!"
             camera.setPos(VBase3(x, y, z))
             self.moveToNextTarget()
+
+            (r, g, b) = getColor(self.trajectory[self.currentTarget].name)
+            self.setBackgroundColor(r*0.2, g*0.2, b*0.2)
+
             #(x,y,z) = (self.trajectory[self.currentTarget].coord[0], self.trajectory[self.currentTarget].coord[1], self.trajectory[self.currentTarget].coord[2])
             #camera.lookAt(x, y, z)
             return Task.cont
