@@ -6,19 +6,134 @@ from direct.task import Task
 from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import *
+from numpy import deg2rad
+import math
 
 import time
 import sys, os
 
-class App():
+
+def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
+    ls = LineSegs()
+
+    angleRadians = deg2rad(angleDegrees)
+
+    for i in range(numSteps + 1):
+        a = angleRadians * i / numSteps
+
+        y = math.sin(a)
+        x = math.cos(a)
+
+        ls.drawTo(x, 0, y)
+
+    node = ls.create()
+    res = NodePath(node)
+
+    res.set_pos(xc, yc, zc)
+    res.look_at(xn, yn, zn)
+    return res
+
+class App(ShowBase):
     def __init__(self):
-        pass
+        ShowBase.__init__(self)
+
+        self.trajectory = []
+        self.currentTarget = 0
+
+        self.cameraSpeed = 0.05
+        self.cameraRotationSpeed = 1
+
+        self.camLens.setNear(0.01)
+
+        self.disableMouse()
+        self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
+
+        title = OnscreenText(text="Code visualisation",
+                     style=1, fg=(1, 1, 1, 1),
+                     pos=(-0.2, 0.9), scale=.07)
+
 
     def addLines(self, lines):
-        pass
+
+        for line in lines:
+            linesegs = LineSegs("lines")
+            linesegs.setColor(1, 0.5, 1, 1)
+            ((x1, y1, z1), (x2, y2, z2)) = line
+            linesegs.drawTo(x1, y1, z1)
+            linesegs.drawTo(x2, y2, z2)
+            node = linesegs.create(False)
+            nodePath = self.render.attachNewNode(node)
+            self.render.attachNewNode(makeArc(x1,y1,z1,x2,y2,z2).node())
 
     def setTrajectory(self, trajectory):
-        pass
+        self.trajectory = trajectory
+        self.currentTarget = 0
 
-    def run(self):
-        pass
+    def moveToNextTarget(self):
+        self.currentTarget += 1
+        if(self.currentTarget == len(self.trajectory)):
+            self.currentTarget = 0
+            print "END OF PROGRAM, START AGAIN"
+
+    def moveCameraTask(self, task):
+        (x,y,z) = (self.trajectory[self.currentTarget].coord[0], self.trajectory[self.currentTarget].coord[1], self.trajectory[self.currentTarget].coord[2])
+
+        if self.trajectory[self.currentTarget].t == True:
+            print "TELEPORT!!!"
+            camera.setPos(VBase3(x, y, z))
+            self.moveToNextTarget()
+            return Task.cont
+
+        currentRotation = VBase3(self.camera.getHpr())
+        self.camera.lookAt(x, y, z)
+        #self.camera.headsUp(x, y, z)
+        desiredRotation = VBase3(self.camera.getHpr())
+        dv = desiredRotation - currentRotation
+
+        if dv.length() > self.cameraRotationSpeed:
+            dv.normalize()
+            currentRotation = currentRotation + dv * self.cameraRotationSpeed
+        else:
+            currentRotation = desiredRotation
+        self.camera.setHpr(currentRotation)
+
+        currentPosition = VBase3(self.camera.getPos())
+        desiredPosition = VBase3(x, y, z)
+        dv = desiredPosition - currentPosition
+
+        if dv.length() < self.cameraSpeed:
+            currentPosition = desiredPosition
+            self.moveToNextTarget()
+        else:
+            dv.normalize()
+            currentPosition = currentPosition + dv * self.cameraSpeed
+
+        self.camera.setPos(currentPosition)
+        return Task.cont
+
+
+class Data:
+    pass
+
+if __name__ == '__main__':
+    points = [(0, 0, 0), (70, 70, 5), (-70, 70, -10), (90, -70, 0), (-20, 80, 10), (0, -100, 0)]
+    lines = []
+    traj = []
+
+    for i in range(len(points) - 1):
+        lines.append((points[i], points[i + 1]))
+
+    for point in points:
+        obj = Data()
+        obj.coord = (point[0], point[1], point[2] + 1)
+        obj.t = False
+        obj.v = False
+        obj.vrs = None
+        if(point[1] == -100):
+            obj.t = True
+        traj.append(obj)
+
+    app = App()
+    app.addLines(lines)
+    app.setTrajectory(traj)
+    app.run()

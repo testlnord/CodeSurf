@@ -5,7 +5,6 @@ import src.log_parser
 import config
 from src.graph_alignment import align_graph, get_lines
 from src.trajectory import make_trajectory, razdvigator
-from src.graph.graph import drawLines
 from src.graph.app import App
 
 
@@ -24,7 +23,7 @@ def main():
         l = get_lines(graphs[name][0], graphs[name][1])
         lines.extend(l)
 
-    drawLines(lines)
+    #drawLines(lines)
     app = App()
     app.addLines(lines)
     app.setTrajectory(trajectory)
