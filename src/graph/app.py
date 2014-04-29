@@ -15,7 +15,8 @@ import time
 import sys, os
 
 cameraSpeed = 0.05
-cameraRotationSpeed = 1
+cameraRotationSpeed = 0.2
+cameraRotationSpeedEpsilon = 2
 
 
 def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
@@ -76,6 +77,7 @@ class App(ShowBase):
 
         self.cameraSpeed = cameraSpeed
         self.cameraRotationSpeed = cameraRotationSpeed
+        self.cameraRotationSpeedEpsilon = cameraRotationSpeedEpsilon
 
         self.camLens.setNear(0.01)
 
@@ -101,9 +103,9 @@ class App(ShowBase):
             nodePath = self.render.attachNewNode(node)
             self.render.attachNewNode(makeArc(x1,y1,z1,x2,y2,z2).node())
         mysh = loader.loadShader("src/shaders/inkGen.sha")
-        self.render.setShader(mysh)
-        self.render.setShaderInput("separation", Vec4(0.001, 0, 0.001,0))
-        self.render.setShaderInput("cutoff", Vec4(0.3, 0.3,0.3,0.3))
+        #self.render.setShader(mysh)
+        #self.render.setShaderInput("separation", Vec4(0.001, 0, 0.001,0))
+        #self.render.setShaderInput("cutoff", Vec4(0.3, 0.3,0.3,0.3))
 
     def setTrajectory(self, trajectory):
         self.trajectory = trajectory
@@ -124,6 +126,9 @@ class App(ShowBase):
 
     def moveCameraTask(self, task):
         (x,y,z) = (self.trajectory[self.currentTarget].coord[0], self.trajectory[self.currentTarget].coord[1], self.trajectory[self.currentTarget].coord[2])
+        (x2, y2, z2) = (x, y, z)
+        if(self.currentTarget + 1 < len(self.trajectory)):
+            (x2, y2, z2) = (self.trajectory[self.currentTarget+1].coord[0], self.trajectory[self.currentTarget+1].coord[1], self.trajectory[self.currentTarget+1].coord[2])
 
         if self.trajectory[self.currentTarget].t == True:
             print "TELEPORT!!!"
@@ -138,17 +143,18 @@ class App(ShowBase):
             return Task.cont
 
         currentRotation = VBase3(self.camera.getHpr())
-        self.camera.lookAt(x, y, z)
+        self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5 )
         #self.camera.headsUp(x, y, z)
         desiredRotation = VBase3(self.camera.getHpr())
         dv = desiredRotation - currentRotation
 
-        if dv.length() > self.cameraRotationSpeed:
+        if dv.length() > self.cameraRotationSpeedEpsilon:
             #dv.normalize()
             #currentRotation = currentRotation + dv * self.cameraRotationSpeed
-            currentRotation = currentRotation + dv*(0.1)
+            currentRotation = currentRotation + dv*self.cameraRotationSpeed
         else:
-            currentRotation = desiredRotation
+            pass
+            #currentRotation = desiredRotation
         self.camera.setHpr(currentRotation)
 
         currentPosition = VBase3(self.camera.getPos())
