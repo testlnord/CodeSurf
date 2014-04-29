@@ -14,7 +14,29 @@ from panda3d.core import Light, Spotlight
 from panda3d.core import TextNode
 from panda3d.core import Vec3, Vec4, Point3
 from panda3d.core import LineSegs, NodePath
+import time
 import sys, os
+
+
+def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
+    ls = LineSegs()
+
+    angleRadians = deg2rad(angleDegrees)
+
+    for i in range(numSteps + 1):
+        a = angleRadians * i / numSteps
+
+        y = math.sin(a)
+        x = math.cos(a)
+
+        ls.drawTo(x, 0, y)
+
+    node = ls.create()
+    res = NodePath(node)
+
+    res.look_at(xn, yn, zn)
+    res.set_pos(xc, yc, zc)
+    return res
 
 
 class GTriangle:
@@ -48,35 +70,12 @@ class GTriangle:
         result.setTwoSided(True)
 
 
-def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
-    ls = LineSegs()
-
-    angleRadians = deg2rad(angleDegrees)
-
-    for i in range(numSteps + 1):
-        a = angleRadians * i / numSteps
-
-        y = math.sin(a)
-        x = math.cos(a)
-
-        ls.drawTo(x, 0, y)
-
-    node = ls.create()
-    res = NodePath(node)
-
-    res.look_at(xn,yn,zn)
-    res.set_pos(xc,yc,zc)
-    return res
-
-
 def drawLines(list1):
     title = OnscreenText(text="Code visualisation",
                          style=1, fg=(1, 1, 1, 1),
                          pos=(-0.2, 0.9), scale=.07)
 
-    base.disableMouse()
-    base.camera.setPos(0, -50, 0)
-    base.oobe()
+    rk = ReadKeys(0, -10, 0)
 
     slight = Spotlight('slight')
     slight.setColor(Vec4(1, 1, 1, 1))
@@ -92,8 +91,87 @@ def drawLines(list1):
         linesegs.drawTo(x2, y2, z2)
         node = linesegs.create(False)
         nodePath = render.attachNewNode(node)
-        render.attachNewNode(makeArc(x1,y1,z1,x2,y2,z2).node())
+
+        p1 = GTriangle(x1, y1, z1);
+        p2 = GTriangle(x2, y2, z2);
+
     run()
+
+#sys.exit()
+
+
+class ReadKeys(DirectObject):
+    def __init__(self, x, y, z):
+        DirectObject.__init__(self);
+
+        base.disableMouse();
+
+        self.v = 5;
+        self.x = x
+        self.y = y
+        self.z = z
+
+        self.moveCamera(0, 0, 0)
+
+        self.accept('w', self.keyForwardDown)
+        self.accept('w-up', self.keyForwardUp)
+
+        self.accept('s', self.keyBackwardDown)
+        self.accept('s-up', self.keyBackwardUp)
+
+        self.accept('a', self.keyLeftDown)
+        self.accept('a-up', self.keyLeftUp)
+
+        self.accept('d', self.keyRightDown)
+        self.accept('d-up', self.keyRightUp)
+
+        self.accept('e', self.keyUpDown)
+        self.accept('e-up', self.keyUpUp)
+
+        self.accept('q', self.keyDownDown)
+        self.accept('q-up', self.keyDownUp)
+
+    def keyForwardDown(self):
+        self.moveCamera(0, self.v, 0)
+
+    def keyForwardUp(self):
+        self.moveCamera(0, 0, 0)
+
+    def keyBackwardDown(self):
+        self.moveCamera(0, -self.v, 0)
+
+    def keyBackwardUp(self):
+        self.moveCamera(0, 0, 0)
+
+    def keyUpDown(self):
+        self.moveCamera(0, 0, self.v)
+
+    def keyUpUp(self):
+        self.moveCamera(0, 0, 0)
+
+    def keyDownDown(self):
+        self.moveCamera(0, 0, -self.v)
+
+    def keyDownUp(self):
+        self.moveCamera(0, 0, 0)
+
+    def keyLeftDown(self):
+        self.moveCamera(-self.v, 0, 0)
+
+    def keyLeftUp(self):
+        self.moveCamera(0, 0, 0)
+
+    def keyRightDown(self):
+        self.moveCamera(self.v, 0, 0)
+
+    def keyRightUp(self):
+        self.moveCamera(0, 0, 0)
+
+    def moveCamera(self, dx, dy, dz):
+        self.x += dx
+        self.y += dy
+        self.z += dz
+        camera.setPos(self.x, self.y, self.z)
 
 
 if __name__ == '__main__':
