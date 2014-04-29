@@ -26,18 +26,21 @@ def makeTorus(xc, yc, zc, xn, yn, zn):
 
     m.look_at(xn, yn, zn)
     m.setHpr(m, Vec3(90, 0, 90))
-    m.setColor(0, 1,0 ,1)
+
     return m
 
 
 def makeTeleport(xc, yc, zc, xn, yn, zn):
     m = makeTorus(xc, yc, zc, xn, yn, zn)
+    m.setColor(0, 1,0 ,1)
     c = loader.loadModel("models/circle.egg")
+    c.setTransparency(TransparencyAttrib.M_alpha)
+
     c.set_pos(xc, yc, zc)
     c.look_at(xn, yn, zn)
     c.setHpr(c, Vec3(90, 0, 90))
-    c.setColor(0.5,0,0,0.001)
-    c.setScale(m, 0.01)
+    c.setColor(0.5,0,0,0.5)
+    c.setScale(m, 0.35)
     return m,c
 
 
