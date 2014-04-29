@@ -8,6 +8,9 @@ int foo(int a){
 }
 
 int main(){
+//    int *k = new int;
+//    delete k;
+//    delete k;
 	int a = foo(3);
 	while (a > 2 ){
         int c = 2;

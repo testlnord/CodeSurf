@@ -58,7 +58,7 @@ def parse(log_path):
                 steps[-1].vars[var_match.group(1)] = var_match.group(2)
 
     func_graphs = {name: func_graphs[name] for name in func_graphs if name[0] != '_'}
-
+    steps = [x for x in steps if x.fun[0] != '_']
     #for name in func_graphs:
     #    print name +": " + str( func_graphs[name].graph)
 
