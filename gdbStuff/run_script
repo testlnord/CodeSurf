@@ -1,8 +1,10 @@
 b main
 set pagination off
 set $_exitcode = 777
+set listsize 1
 r
 while $_exitcode == 777
+  list
   info stack 1
   info local
   step
