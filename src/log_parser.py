@@ -47,7 +47,7 @@ def parse(log_path):
         code_match = line_code.match(line)
         if code_match:
             #print line
-            lastLine = line
+            lastLine = code_match.group(1)+": "+code_match.group(2)
         #    continue
         func_match = function.match(line)
         if func_match:

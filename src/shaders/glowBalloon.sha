@@ -1,69 +1,41 @@
 //Cg
 //
 //Cg profile arbvp1 arbfp1
-
-void vshader(float3 Position : POSITION,
-		    float4 Normal : NORMAL,
+//
+void vshader(float3 vtx_position : POSITION,
+		    float4 vtx_normal : NORMAL,
 			uniform float Inflate,
-			uniform float4x4 WorldITXf, // our four standard "untweakable" xforms
-			uniform float4x4 WorldXf,
-			uniform float4x4 ViewIXf,
-			uniform float4x4 WvpXf,
-			out float4 HPosition : POSITION,
-			out float3 WorldNormal : TEXCOORD0,
-			out float3 WorldView : TEXCOORD1
+			uniform float4x4 tpose_model_to_world,
+			uniform float4x4 trans_model_to_world,
+			uniform float4x4 tpose_world_to_apiview,
+			uniform float4x4 mat_projection,
+			out float4 l_position : POSITION,
+			out float3 l_WorldNormal : TEXCOORD0,
+			out float3 l_WorldView : TEXCOORD1
 ) {
-    WorldNormal = mul(WorldITXf, Normal).xyz;
-    float4 Po = float4(Position.xyz, 1);
-    Po += (Inflate * normalize(float4(Normal.xyz, 0))) * Normal; // the balloon effect
+    float4x4 WorldITXf = itp_modelview;
+    float4x4 WorldXf = trans_model_to_world;
+    float4x4 ViewIXf = inv_modelview;
+    float4x4 WvpXf = mat_projection;
+    l_WorldNormal = mul(WorldITXf, vtx_normal).xyz;
+    float4 Po = float4(vtx_position.xyz, 1);
+    Po += (Inflate * normalize(float4(vtx_normal.xyz, 0))) * vtx_normal;  //the balloon effect
     float4 Pw = mul(WorldXf, Po);
-    WorldView = normalize(float3(ViewIXf[0].w, ViewIXf[1].w, ViewIXf[2].w) - Pw.xyz);
-    HPosition = mul(WvpXf, Po);
+    l_WorldView = normalize(float3(ViewIXf[0].w, ViewIXf[1].w, ViewIXf[2].w) - Pw.xyz);
+    l_position = mul(WvpXf, Po);
 }
-/* ink shader as sample
-avoid vshader(float4 vtx_position : POSITION,
-             float4 vtx_texcoord0 : TEXCOORD0,
-             out float4 l_position : POSITION,
-             out float4 l_texcoord0 : TEXCOORD0,
-             uniform float4x4 mat_modelproj)
-{
-  l_position=mul(mat_modelproj, vtx_position);
-  l_texcoord0 = vtx_texcoord0;
-}
-*/
-float4 fshader (float3 WorldNormal : TEXCOORD0,
-			float3 WorldView : TEXCOORD1,
+
+
+void fshader (float3 l_WorldNormal : TEXCOORD0,
+			float3 l_WorldView : TEXCOORD1,
 			uniform float3 GlowColor,
-			uniform float GlowExpon
-			) : COLOR
+			uniform float GlowExpon,
+			out float4 o_color: COLOR)
 {
-    float3 Nn = normalize(WorldNormal);
-    float3 Vn = normalize(WorldView);
+    float3 Nn = normalize(l_WorldNormal);
+    float3 Vn = normalize(l_WorldView);
     float edge = 1.0 - dot(Nn, Vn);
     edge = pow(edge, GlowExpon);
     float3 result = edge * GlowColor.rgb;
-    return float4(result, edge);
+    o_color =  float4(result, edge);
 }
-/* ink shader as sample
-void fshader(float4 l_texcoord0 : TEXCOORD0,
-             uniform sampler2D tex_0 : TEXUNIT0,
-             uniform float4 k_cutoff : C6,
-             uniform float4 k_separation : C7,
-             out float4 o_color : COLOR)
-{
-  float4 texcoord0 = l_texcoord0 + k_separation.xyzw;
-  float4 color0=tex2D(tex_0, float2(texcoord0.x, texcoord0.y));
-  float4 texcoord1 = l_texcoord0 - k_separation.xyzw;
-  float4 color1=tex2D(tex_0, float2(texcoord1.x, texcoord1.y));
-  float4 texcoord2 = l_texcoord0 + k_separation.wzyx;
-  float4 color2=tex2D(tex_0, float2(texcoord2.x, texcoord2.y));
-  float4 texcoord3 = l_texcoord0 - k_separation.wzyx;
-  float4 color3=tex2D(tex_0, float2(texcoord3.x, texcoord3.y));
-  float4 mx = max(color0,max(color1,max(color2,color3)));
-  float4 mn = min(color0,min(color1,min(color2,color3)));
-  float4 trigger = saturate(((mx-mn) * 3) - k_cutoff.x);
-  float thresh = dot(float3(trigger.x, trigger.y, trigger.z),float3(1,1,1));
-  float4 output_color = float4 (0, 0, 0, thresh);
-  o_color = output_color;
-}
-*/
