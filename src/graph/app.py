@@ -35,13 +35,21 @@ def makeTeleport(xc, yc, zc, xn, yn, zn):
     m.setColor(0, 1,0 ,1)
     c = loader.loadModel("models/circle.egg")
     c.setTransparency(TransparencyAttrib.M_alpha)
-
+    aur = Shader.load("src/shaders/ps_glowBalloon.cg", Shader.SLCg)
+    m.setShader(aur)
+    mysh = Shader.load(Shader.SLGLSL, "src/shaders/def_sl_vertex.glsl","src/shaders/burl.glsl",
+                       "src/shaders/def_sl_geom.glsl")
+    c.setShader(mysh)
+    #c.setShaderInput("time", 0)
+    #self.render.setShaderInput("cutoff", Vec4(0.3, 0.3,0.3,0.3))
+    time = random.random()*100
+    c.setShaderInput("time", time)
     c.set_pos(xc, yc, zc)
     c.look_at(xn, yn, zn)
     c.setHpr(c, Vec3(90, 0, 90))
     c.setColor(0.5,0,0,0.5)
     c.setScale(m, 0.35)
-    return m,c
+    return m,c, time
 
 
 def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
@@ -108,6 +116,7 @@ class App(ShowBase):
 
         self.disableMouse()
         self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
+        self.taskMgr.add(self.updateObjects, "Update")
 
         title = OnscreenText(text="Code visualisation",
                      style=1, fg=(1, 1, 1, 1),
@@ -116,6 +125,9 @@ class App(ShowBase):
         #b=OnscreenImage(parent=self.render, image="stuff.jpg")
         #self.camera.node().getDisplayRegion(0).setSort(20)
 
+        #dirty hack stuff
+        self.teleports = []
+        self.time = 0
 
     def addLines(self, lines, teleports):
         for line in lines:
@@ -127,16 +139,15 @@ class App(ShowBase):
             node = linesegs.create(False)
             nodePath = self.render.attachNewNode(node)
             self.render.attachNewNode(primitives.makeCircle(x1,y1,z1,x2,y2,z2).node())
+
         for teleport in teleports:
             (x1,y1,z1) = teleport.pos
             (x2,y2,z2) = teleport.orient
-            m,c = makeTeleport(x1, y1, z1, x2, y2, z2)
+            m,c,t = makeTeleport(x1, y1, z1, x2, y2, z2)
             m.reparentTo(self.render)
+            self.teleports.append((c,t))
             c.reparentTo(self.render)
-        mysh = loader.loadShader("src/shaders/inkGen.sha")
-        #self.render.setShader(mysh)
-        #self.render.setShaderInput("separation", Vec4(0.001, 0, 0.001,0))
-        #self.render.setShaderInput("cutoff", Vec4(0.3, 0.3,0.3,0.3))
+
 
     def setTrajectory(self, trajectory):
         self.trajectory = trajectory
@@ -152,8 +163,13 @@ class App(ShowBase):
             self.currentTarget = 0
             print "END OF PROGRAM, START AGAIN"
 
-    def updateObjects(self):
-        pass
+    def updateObjects(self, task):
+        for tel,t in self.teleports:
+
+            tel.setShaderInput("time", t+self.time)
+        self.time+=0.1
+
+        return task.again
 
     def teleportToNext(self):
         self.moveToNextTarget()
@@ -172,6 +188,7 @@ class App(ShowBase):
 
 
     def moveCameraTask(self, task):
+
         (x,y,z) = (self.trajectory[self.currentTarget].coord[0], self.trajectory[self.currentTarget].coord[1], self.trajectory[self.currentTarget].coord[2])
         (x2, y2, z2) = (x, y, z)
 

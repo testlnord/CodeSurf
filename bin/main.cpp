@@ -12,10 +12,12 @@ int main(){
 //    delete k;
 //    delete k;
 	int a = foo(3);
-	while (a > 2 ){
-        int c = 2;
-        c = c * c;
-        a --;
+	for (int i = 0 ; i < 2; i++){
+        for (int j = a; j  > 2; j-- ){
+            int c = 2;
+            c = c * c;
+            j --;
+        }
 	}
 	return 0;
 }
