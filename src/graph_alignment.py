@@ -25,8 +25,6 @@ class GraphAlignment:
         for tu in range(len(graph)):
             for tv in graph[tu]:
                 u, v = tu, tv
-                #if u > v:
-                #    u, v = v, u
                 if (u, v) in edges:
                     continue
 
@@ -58,7 +56,6 @@ class GraphAlignment:
     def get_direction(self, u, v):
         vec = self.points[v] - self.points[u]
         dist2 = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]
-        #dist2 = vec.dot(vec)
 
         return dist2, vec
 
@@ -132,14 +129,16 @@ def interpolateBetweenPoints(bp, ep):
 
     return res
 
+
 def estimateLength(points):
     sum = 0
     last = points[0]
     for p in points[1:]:
         sum += linalg.norm(p-last)
         last = p
-    #print "est len = %s (%s points)" % (sum, len(points))
+
     return sum
+
 
 def splineInterpolate(points, pb, mid, pe):
     t = [pb]
@@ -165,8 +164,10 @@ def interpolate(points, edges):
 
     return newEdges
 
+
 def toTuple(p):
     return (p[0], p[1], p[2])
+
 
 def get_lines(points, edges):
     lines = []
@@ -180,6 +181,4 @@ def get_lines(points, edges):
 if __name__ == '__main__':
     graph = [[1, 4], [2, 3], [0], [0], [5], []]
     points, edges = align_graph(graph)
-
-    #from src.graph.graph import drawLines
-    #drawLines(get_lines(points, edges))
+    
