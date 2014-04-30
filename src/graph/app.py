@@ -265,25 +265,28 @@ class App(ShowBase):
         (x, y, z) = self.trajectory[self.currentTarget].coord
         (x2, y2, z2) = (x, y, z)
 
-        #if (self.currentTarget + 1 < len(self.trajectory)) and (self.trajectory[self.currentTarget+1].t == False):
-        #    (x2, y2, z2) = self.trajectory[self.currentTarget + 1].coord
+        if (self.currentTarget + 1 < len(self.trajectory)) and (self.trajectory[self.currentTarget+1].t == False):
+            (x2, y2, z2) = self.trajectory[self.currentTarget + 1].coord
 
-        currentRotation = VBase3(self.camera.getHpr())
+        oldRotation = VBase3(self.camera.getHpr())
+        currentRotation = applyToVector(oldRotation, toPositiveAngle)
         oldRotation = currentRotation
         self.camera.lookAt(x, y, z)
-        #self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5)
-        desiredRotation = VBase3(self.camera.getHpr())
+
+        self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5)
+
+        desiredRotation = applyToVector(VBase3(self.camera.getHpr()), toPositiveAngle)
         dv = desiredRotation - currentRotation
         delta = VBase3(0, 0, 0)
 
         if dv.length() > self.cameraRotationSpeedEpsilon:
             if dv.length() > self.cameraRotationSpeed:
+                dv = applyToVector(dv, toSharpAngle)
                 dv.normalize()
                 #currentRotation = currentRotation + dv * self.cameraRotationSpeed
                 delta = dv * self.cameraRotationSpeed
             else:
                 pass
-                #currentRotation = currentRotation + dv
 
         self.cameraRotationChange = (self.cameraRotationChange + delta) * self.cameraRotationChangeRatio
 
@@ -291,6 +294,18 @@ class App(ShowBase):
             self.camera.setHpr(oldRotation + self.cameraRotationChange)
 
         return Task.cont
+
+def applyToVector(vec, fun):
+    return VBase3(fun(vec[0]), fun(vec[1]), fun(vec[2]))
+
+def toPositiveAngle(angle):
+    return (angle + 360.0001) % 360
+
+def toSharpAngle(angle):
+    if angle < 0:
+        return angle if angle >= -180 else 360 + angle
+    else:
+        return angle if angle <= 180 else -360 + angle
 
 class Data:
     pass
