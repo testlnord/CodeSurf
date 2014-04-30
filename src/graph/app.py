@@ -34,20 +34,13 @@ def makeTorus(xc, yc, zc, xn, yn, zn):
     return m
 
 
-def makeTeleport(xc, yc, zc, xn, yn, zn):
+def makeTeleport(xc, yc, zc, xn, yn, zn, r, g, b):
     m = makeTorus(xc, yc, zc, xn, yn, zn)
-    m.setColor(0, 1,0 ,1)
+    m.setColor(r*0.8, g*0.8,b*0.8 ,1)
     c = loader.loadModel("models/circle.egg")
     c.setTransparency(TransparencyAttrib.M_dual)
-    aur = Shader.load("src/shaders/glowBalloon.sha")
-    c.setColor(0.5,0,0,0.5)
-    m.setShader(aur)
 
 
-    m.setShaderInput("GlowColor", Vec3(0.0,0.0, 0.0))
-    m.setShaderInput("GlowExpon", 0.1)
-    m.setShaderInput("Inflate", 0.1)
-    #m.setShaderInput("WorldXf")
     mysh = Shader.load(Shader.SLGLSL, "src/shaders/def_sl_vertex.glsl","src/shaders/burl.glsl",
                        "src/shaders/def_sl_geom.glsl")
     c.setShader(mysh)
@@ -199,7 +192,9 @@ class App(ShowBase):
         for teleport in teleports:
             (x1,y1,z1) = teleport.pos
             (x2,y2,z2) = teleport.orient
-            m,c,t = makeTeleport(x1, y1, z1, x2, y2, z2)
+            (r, g, b) = getColor(teleport.to_fun)
+
+            m,c,t = makeTeleport(x1, y1, z1, x2, y2, z2, r, g, b)
             m.reparentTo(self.render)
             self.teleports.append((c,t))
             c.reparentTo(self.render)
