@@ -5,6 +5,9 @@ from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
+from direct.particles.Particles import Particles
+from direct.particles.ParticleEffect import ParticleEffect
+from direct.particles.ForceGroup import ForceGroup
 from panda3d.core import *
 from numpy import deg2rad
 
@@ -16,9 +19,8 @@ import sys, os
 from src.graph import primitives
 
 cameraSpeed = 0.05
-cameraRotationSpeed = 2
-cameraRotationSpeedEpsilon = 4
-
+cameraRotationSpeed = 3
+cameraRotationSpeedEpsilon = 2
 
 def makeTorus(xc, yc, zc, xn, yn, zn):
     m = loader.loadModel("models/Torus.egg")
@@ -34,7 +36,7 @@ def makeTeleport(xc, yc, zc, xn, yn, zn):
     m = makeTorus(xc, yc, zc, xn, yn, zn)
     m.setColor(0, 1,0 ,1)
     c = loader.loadModel("models/circle.egg")
-    c.setTransparency(TransparencyAttrib.M_alpha)
+    #c.setTransparency(TransparencyAttrib.M_alpha)
     aur = Shader.load("src/shaders/ps_glowBalloon.cg", Shader.SLCg)
     m.setShader(aur)
     mysh = Shader.load(Shader.SLGLSL, "src/shaders/def_sl_vertex.glsl","src/shaders/burl.glsl",
@@ -73,37 +75,12 @@ def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
     return res
 
 
-class MockObject:
-    def __init__(self):
-        self.pos = (0, 0, 0)
-        self.hpr = (0, 0, 0)
-
-    def getPos(self):
-        return self.pos
-
-    def getHpr(self):
-        return self.hpr
-
-    def setPos(self, pos1):
-        self.pos = pos1
-
-    def setHpr(self, hpr1):
-        self.hpr = hpr1
-
-
 class App(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
 
         self.trajectory = []
         self.currentTarget = 0
-
-        self.followObject1 = MockObject()
-        #self.followObject1.setPos()
-        #myFog = Fog("Fog")
-        #myFog.setColor(0,0.05,0.05)
-        #myFog.setExpDensity(0.5)
-        #self.render.setFog(myFog)
 
         self.setBackgroundColor(0, 0, 0.1)
         self.render.setAntialias(AntialiasAttrib.MPolygon)
@@ -115,19 +92,50 @@ class App(ShowBase):
         self.camLens.setNear(0.01)
 
         self.disableMouse()
-        self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
         self.taskMgr.add(self.updateObjects, "Update")
+
+        self.setupLights()
+
+        #self.addParticles()
 
         title = OnscreenText(text="Code visualisation",
                      style=1, fg=(1, 1, 1, 1),
                      pos=(-0.2, 0.9), scale=.07)
 
-        #b=OnscreenImage(parent=self.render, image="stuff.jpg")
-        #self.camera.node().getDisplayRegion(0).setSort(20)
+        self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
+
+
+    def setupLights(self):
+        ambientLight = AmbientLight("ambientLight")
+        ambientLight.setColor(Vec4(.4, .4, .35, 1))
+        self.render.setLight(self.render.attachNewNode(ambientLight))
 
         #dirty hack stuff
         self.teleports = []
         self.time = 0
+
+    def addParticles(self):
+        base.enableParticles()
+        self.particles = ParticleEffect()
+        self.particles.loadConfig(Filename('particles/steam.ptf'))
+
+        self.particleNodePath = NodePath('gridnode')
+        self.particleNodePath.reparentTo(self.camera)
+        self.particleNodePath.setPos(0, 10, 0)
+
+        self.particles.setPos(0, 0, 0)
+        self.particles.setDepthTest(False)
+        self.particles.start(self.particleNodePath)
+
+    def updateParticles(self):
+        pass
+        #currentPosition = VBase3(self.camera.getPos())
+        #(x,y,z) = self.trajectory[self.currentTarget].coord
+        #desiredPosition = VBase3(x, y, z)
+        #dv = desiredPosition - currentPosition
+        #dv.normalize()
+        #self.particles.start(self.particleNodePath)
+        #self.particles.setPos(dv*100)
 
     def addLines(self, lines, teleports):
         for line in lines:
@@ -152,17 +160,15 @@ class App(ShowBase):
     def setTrajectory(self, trajectory):
         self.trajectory = trajectory
         for obj in trajectory:
-            #obj.coord[2] += 1
             (x,y,z) = obj.coord
             obj.coord = (x,y,z+0.05)
         self.currentTarget = 0
 
-    def moveToNextTarget(self):
+    def aimToNextTarget(self):
         self.currentTarget += 1
-        if(self.currentTarget == len(self.trajectory)):
+        if self.currentTarget == len(self.trajectory):
             self.currentTarget = 0
             print "END OF PROGRAM, START AGAIN"
-
     def updateObjects(self, task):
         for tel,t in self.teleports:
 
@@ -172,84 +178,73 @@ class App(ShowBase):
         return task.again
 
     def teleportToNext(self):
-        self.moveToNextTarget()
-
-        (x,y,z) = (self.trajectory[self.currentTarget].coord[0], self.trajectory[self.currentTarget].coord[1], self.trajectory[self.currentTarget].coord[2])
         print "Teleport to next"
-        self.camera.setPos(VBase3(x, y, z))
+        (x,y,z) = self.trajectory[self.currentTarget].coord
+        self.camera.setPos(x, y, z)
+        self.aimToNextTarget()
 
-        self.moveToNextTarget()
+        (x,y,z) = self.trajectory[self.currentTarget].coord
+        self.camera.lookAt(x, y, z)
 
         (r, g, b) = getColor(self.trajectory[self.currentTarget].name)
-        self.setBackgroundColor(r*0.2, g*0.2, b*0.2 )
-
-        (x,y,z) = (self.trajectory[self.currentTarget].coord[0], self.trajectory[self.currentTarget].coord[1], self.trajectory[self.currentTarget].coord[2])
-        self.camera.lookAt(x, y, z)
+        self.setBackgroundColor(r*0.2, g*0.2, b*0.2)
 
 
     def moveCameraTask(self, task):
-
-        (x,y,z) = (self.trajectory[self.currentTarget].coord[0], self.trajectory[self.currentTarget].coord[1], self.trajectory[self.currentTarget].coord[2])
-        (x2, y2, z2) = (x, y, z)
-
-        if(self.currentTarget + 1 < len(self.trajectory)):
-            (x2, y2, z2) = (self.trajectory[self.currentTarget+1].coord[0], self.trajectory[self.currentTarget+1].coord[1], self.trajectory[self.currentTarget+1].coord[2])
+        self.updateParticles()
 
         if self.trajectory[self.currentTarget].t == True:
-            #print "TELEPORT!!!"
             self.teleportToNext()
             return Task.cont
 
-        currentRotation = VBase3(self.camera.getHpr())
-        self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5 )
-        #self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5 )
-        #self.camera.headsUp(x, y, z)
-        desiredRotation = VBase3(self.camera.getHpr())
-        dv = desiredRotation - currentRotation
-
-        if dv.length() > self.cameraRotationSpeed:
-            dv.normalize()
-            currentRotation = currentRotation + dv * self.cameraRotationSpeed
-            #currentRotation = currentRotation + dv*self.cameraRotationSpeed
-        else:
-            pass
-            #currentRotation = desiredRotation
-        self.camera.setHpr(currentRotation)
-
-
+        #MOVE
         self.cameraSpeed = cameraSpeed
 
+        (x,y,z) = self.trajectory[self.currentTarget].coord
         currentPosition = VBase3(self.camera.getPos())
         desiredPosition = VBase3(x, y, z)
         dv = desiredPosition - currentPosition
 
-        teleported = False
         while dv.length() < self.cameraSpeed:
-            currentPosition = desiredPosition
-            self.moveToNextTarget()
+            self.cameraSpeed -= dv.length()
+            self.camera.setPos(desiredPosition)
+            self.aimToNextTarget()
             if self.trajectory[self.currentTarget].t == True:
                 self.teleportToNext()
                 self.cameraSpeed = 0
-                teleported = True
+                currentPosition = VBase3(self.camera.getPos())
+                break
+            (x,y,z) = self.trajectory[self.currentTarget].coord
+            currentPosition = VBase3(self.camera.getPos())
+            desiredPosition = VBase3(x, y, z)
+            dv = desiredPosition - currentPosition
+
+        dv.normalize()
+        currentPosition += dv * self.cameraSpeed
+        self.camera.setPos(currentPosition)
+
+        #ROTATE
+        (x, y, z) = self.trajectory[self.currentTarget].coord
+        (x2, y2, z2) = (x, y, z)
+
+        #if (self.currentTarget + 1 < len(self.trajectory)) and (self.trajectory[self.currentTarget+1].t == False):
+        #    (x2, y2, z2) = self.trajectory[self.currentTarget + 1].coord
+
+        currentRotation = VBase3(self.camera.getHpr())
+        self.camera.lookAt(x, y, z)
+        #self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5)
+        desiredRotation = VBase3(self.camera.getHpr())
+        dv = desiredRotation - currentRotation
+
+        if dv.length() > self.cameraRotationSpeedEpsilon:
+            if dv.length() > self.cameraRotationSpeed:
+                dv.normalize()
+                currentRotation = currentRotation + dv * self.cameraRotationSpeed
             else:
-                self.cameraSpeed -= dv.length()
+                pass
 
-        if not teleported:
-            pass
-            dv.normalize()
-            currentPosition = currentPosition + dv * self.cameraSpeed
-            self.camera.setPos(currentPosition)
+        self.camera.setHpr(currentRotation)
 
-        """
-        if dv.length() < self.cameraSpeed:
-            currentPosition = desiredPosition
-            self.moveToNextTarget()
-        else:
-            dv.normalize()
-            currentPosition = currentPosition + dv * self.cameraSpeed
-        """
-
-        #self.camera.setPos(currentPosition)
         return Task.cont
 
 
