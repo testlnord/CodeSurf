@@ -130,6 +130,15 @@ def interpolateBetweenPoints(bp, ep):
 
     return res
 
+def estimateLength(points):
+    sum = 0
+    last = points[0]
+    for p in points[1:]:
+        sum += linalg.norm(p-last)
+        last = p
+    #print "est len = %s (%s points)" % (sum, len(points))
+    return sum
+
 def splineInterpolate(points, pb, mid, pe):
     t = [pb]
     t.extend(mid)
@@ -139,7 +148,7 @@ def splineInterpolate(points, pb, mid, pe):
         p[i] = points[t[i]]
 
     tck, u = scipy.interpolate.splprep(p.transpose())
-    return np.asarray(scipy.interpolate.splev(np.linspace(0, 1, pointsInSpline), tck)).transpose()[1:]
+    return np.asarray(scipy.interpolate.splev(np.linspace(0, 1, estimateLength(p)/pointsDist), tck)).transpose()[1:]
 
 
 def interpolate(points, edges):
