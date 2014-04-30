@@ -109,6 +109,8 @@ class App(ShowBase):
 
         self.addParticles()
 
+        #self.initPulses()
+
         self.title = OnscreenText(text="Code visualisation",
                      style=1, fg=(1, 1, 1, 1),
                      pos=(-0.2, 0.9), scale=.07)
@@ -117,7 +119,7 @@ class App(ShowBase):
                      style=1, fg=(1, 1, 1, 1),
                      pos=(-1, 0.8), scale=.07, mayChange=True, align = TextNode.ALeft)
 
-        self.captionVars = OnscreenText(text="Caption",
+        self.captionVars = OnscreenText(text="local scope",
                      style=1, fg=(1, 1, 1, 1),
                      pos=(-1, 0.7), scale=.07, mayChange=True, align = TextNode.ALeft)
 
@@ -126,7 +128,8 @@ class App(ShowBase):
 
     def setupLights(self):
         ambientLight = AmbientLight("ambientLight")
-        ambientLight.setColor(Vec4(.4, .4, .35, 1))
+        #ambientLight.setColor(Vec4(.4, .4, .35, 1))
+        ambientLight.setColor(Vec4(1, 1, 1, 1))
         self.render.setLight(self.render.attachNewNode(ambientLight))
 
         #dirty hack stuff
@@ -184,6 +187,60 @@ class App(ShowBase):
         tnp.setPos(-0.004*textNode.getWidth(), 0, 0)
         tnp.setScale(0.05)
         billboardNode.setBillboardPointEye()
+
+
+    def initPulses(self):
+        self.pulseNodes = []
+        self.pulseNodeCounters = []
+        self.pulseNodeVelocity = []
+
+        for i in xrange(10):
+            pulseNode = NodePath('pulseNode')
+            pulseNode.reparentTo(self.render)
+            pulseNode.setPos(0, 0, 0)
+            
+            c = loader.loadModel("models/Sphere.egg")
+            c.reparentTo(pulseNode)
+            #c.setScale(0.1)
+            self.pulseNodeCounters.append(0)
+            self.pulseNodeVelocity.append(random.random()*2 + 2)
+            self.pulseNodes.append(pulseNode)
+
+    def teleportPulseToNext(self, num):
+        self.pulseMoveToNext(num)
+        self.pulseNodes[num].setPos(self.trajectory[self.pulseNodeCounters[num]].coord)
+
+    def pulseMoveToNext(self, num):
+        self.pulseNodeCounters[num] -= 1
+        if self.pulseNodeCounters[num] < 0:
+            self.pulseNodeCounters[num] = len(self.trajectory) - 1
+
+    def pulseShouldTeleport(self, num):
+        prevNum = self.pulseNodeCounters[num] + 1
+        if prevNum == len(self.trajectory):
+            prevNum = 0
+        return self.trajectory[prevNum]
+
+    def updatePulse(self, i):
+        if self.pulseShouldTeleport(i):
+            self.teleportPulseToNext(i)
+            return
+
+        currentPosition = VBase3(self.pulseNodes[i].getPos())
+        desiredPosition = VBase3(*self.trajectory[self.pulseNodeCounters[i]].coord)
+        dx = desiredPosition - currentPosition
+        if dx.length() < self.pulseNodeVelocity[i]:
+            self.pulseNodes[i].setPos(desiredPosition)
+            self.pulseMoveToNext(i)
+        else:
+            dx.normalize()
+            currentPosition = dx * self.pulseNodeVelocity[i] + currentPosition
+            self.pulseNodes[i].setPos(currentPosition)
+
+    def updatePulses(self):
+        for i in xrange(len(self.pulseNodes)):
+            self.updatePulse(i)
+
 
     def addLines(self, lines, teleports, instructions):  # instructions : list of objects with fields: (x,y,z, text)
         for line in lines:
@@ -259,6 +316,8 @@ class App(ShowBase):
         if self.currentTarget == 0:
             self.teleportToNext()
             return Task.cont
+
+        #self.updatePulses()
 			
         self.updateCaptions()
 
