@@ -7,6 +7,7 @@ from src.graph_alignment import align_graph, get_lines
 from src.trajectory import make_trajectory, razdvigator, get_teleports, get_instructions
 from src.graph.app import App
 
+from pandac.PandaModules import ClockObject
 
 def main():
     log = src.gdbrer.gdblog(config.def_bin, config.gdb_script, config.logs_path)
@@ -19,6 +20,13 @@ def main():
     trajectory = make_trajectory(steps, graphs)
     teleports = get_teleports(steps, graphs)
     instructions = get_instructions(steps, graphs)
+
+
+    FPS = 50
+    globalClock = ClockObject.getGlobalClock()
+    globalClock.setMode(ClockObject.MLimited)
+    globalClock.setFrameRate(FPS)
+
     #lines = []
     app = App()
     for name in graphs:
