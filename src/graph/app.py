@@ -129,7 +129,7 @@ class App(ShowBase):
     def addParticles(self):
         base.enableParticles()
         self.particles = ParticleEffect()
-        self.particles.loadConfig(Filename('particles/nick4.ptf'))
+        self.particles.loadConfig(Filename('particles/one_zero.ptf'))
 
         self.particleNodePath = NodePath('gridnode')
         self.particleNodePath.reparentTo(self.camera)
