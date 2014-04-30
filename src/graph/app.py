@@ -189,7 +189,7 @@ class App(ShowBase):
             linesegs.drawTo(x1, y1, z1)
             linesegs.drawTo(x2, y2, z2)
             node = linesegs.create(False)
-            nodePath = self.render.attachNewNode(node)
+            #nodePath = self.render.attachNewNode(node)
             self.render.attachNewNode(primitives.makeCircle(x1,y1,z1,x2,y2,z2).node())
 
         for teleport in teleports:
