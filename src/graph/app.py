@@ -157,6 +157,34 @@ class App(ShowBase):
         #self.particles.start(self.particleNodePath)
         #self.particles.setPos(dv*100)
 
+    def makeBillboard(self, coords, text):
+
+        billboardNode = NodePath('billboardnode')
+        billboardNode.reparentTo(self.render)
+        (x,y,z) = coords
+        billboardNode.setPos(x, y, z + 0.1)
+
+        textNode = TextNode('node name')
+        textNode.setText(text)
+        textNode.setTextColor(1, 1, 1, 1)
+        textNode.setCardColor(0, 0, 0, 0.3)
+        textNode.setCardAsMargin(0.2, 0.2, 0.2, 0.2)
+        textNode.setCardDecal(True)
+        textNode.setWordwrap(15.0)
+        textNode.setTabWidth(0.05)
+        textNode.setAlign(TextNode.ACenter)
+        textNode.setShadow(0.05, 0.05)
+        textNode.setShadowColor(0, 0, 0, 1)
+
+        cardMaker = CardMaker('cardmaker')
+        card = NodePath(cardMaker.generate())
+        tnp = card.attachNewNode(textNode)
+        card.setEffect(DecalEffect.make())
+        tnp.reparentTo(billboardNode)
+        tnp.setPos(-0.004*textNode.getWidth(), 0, 0)
+        tnp.setScale(0.05)
+        billboardNode.setBillboardPointEye()
+
     def addLines(self, lines, teleports, instructions):  # instructions : list of objects with fields: (x,y,z, text)
         for line in lines:
             linesegs = LineSegs("lines")
@@ -165,7 +193,7 @@ class App(ShowBase):
             linesegs.drawTo(x1, y1, z1)
             linesegs.drawTo(x2, y2, z2)
             node = linesegs.create(False)
-            nodePath = self.render.attachNewNode(node)
+            #nodePath = self.render.attachNewNode(node)
             self.render.attachNewNode(primitives.makeCircle(x1,y1,z1,x2,y2,z2).node())
 
         for teleport in teleports:
@@ -175,6 +203,10 @@ class App(ShowBase):
             m.reparentTo(self.render)
             self.teleports.append((c,t))
             c.reparentTo(self.render)
+
+        for instruction in instructions:
+            #(x,y,z,text) = instruction
+            self.makeBillboard((instruction.x, instruction.y, instruction.z), instruction.text)
 
 
     def setTrajectory(self, trajectory):
@@ -269,25 +301,28 @@ class App(ShowBase):
         (x, y, z) = self.trajectory[self.currentTarget].coord
         (x2, y2, z2) = (x, y, z)
 
-        #if (self.currentTarget + 1 < len(self.trajectory)) and (self.trajectory[self.currentTarget+1].t == False):
-        #    (x2, y2, z2) = self.trajectory[self.currentTarget + 1].coord
+        if (self.currentTarget + 1 < len(self.trajectory)) and (self.trajectory[self.currentTarget+1].t == False):
+            (x2, y2, z2) = self.trajectory[self.currentTarget + 1].coord
 
-        currentRotation = VBase3(self.camera.getHpr())
+        oldRotation = VBase3(self.camera.getHpr())
+        currentRotation = applyToVector(oldRotation, toPositiveAngle)
         oldRotation = currentRotation
         self.camera.lookAt(x, y, z)
-        #self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5)
-        desiredRotation = VBase3(self.camera.getHpr())
+
+        self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5)
+
+        desiredRotation = applyToVector(VBase3(self.camera.getHpr()), toPositiveAngle)
         dv = desiredRotation - currentRotation
         delta = VBase3(0, 0, 0)
 
         if dv.length() > self.cameraRotationSpeedEpsilon:
             if dv.length() > self.cameraRotationSpeed:
+                dv = applyToVector(dv, toSharpAngle)
                 dv.normalize()
                 #currentRotation = currentRotation + dv * self.cameraRotationSpeed
                 delta = dv * self.cameraRotationSpeed
             else:
                 pass
-                #currentRotation = currentRotation + dv
 
         self.cameraRotationChange = (self.cameraRotationChange + delta) * self.cameraRotationChangeRatio
 
@@ -295,6 +330,18 @@ class App(ShowBase):
             self.camera.setHpr(oldRotation + self.cameraRotationChange)
 
         return Task.cont
+
+def applyToVector(vec, fun):
+    return VBase3(fun(vec[0]), fun(vec[1]), fun(vec[2]))
+
+def toPositiveAngle(angle):
+    return (angle + 360.0001) % 360
+
+def toSharpAngle(angle):
+    if angle < 0:
+        return angle if angle >= -180 else 360 + angle
+    else:
+        return angle if angle <= 180 else -360 + angle
 
 class Data:
     pass
