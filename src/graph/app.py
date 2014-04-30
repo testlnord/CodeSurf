@@ -36,9 +36,12 @@ def makeTeleport(xc, yc, zc, xn, yn, zn):
     m = makeTorus(xc, yc, zc, xn, yn, zn)
     m.setColor(0, 1,0 ,1)
     c = loader.loadModel("models/circle.egg")
-    #c.setTransparency(TransparencyAttrib.M_alpha)
-    aur = Shader.load("src/shaders/ps_glowBalloon.cg", Shader.SLCg)
-    m.setShader(aur)
+    c.setTransparency(TransparencyAttrib.M_alpha)
+    #aur = Shader.load("src/shaders/glowBalloon.sha")
+    c.setColor(0.5,0,0,0.5)
+    #m.setShader(aur)
+    #m.setShaderInput("WorldITXf", SceneSetup.getWorldTransform())
+    #m.setShaderInput("WorldXf")
     mysh = Shader.load(Shader.SLGLSL, "src/shaders/def_sl_vertex.glsl","src/shaders/burl.glsl",
                        "src/shaders/def_sl_geom.glsl")
     c.setShader(mysh)
@@ -49,7 +52,7 @@ def makeTeleport(xc, yc, zc, xn, yn, zn):
     c.set_pos(xc, yc, zc)
     c.look_at(xn, yn, zn)
     c.setHpr(c, Vec3(90, 0, 90))
-    c.setColor(0.5,0,0,0.5)
+
     c.setScale(m, 0.35)
     return m,c, time
 
