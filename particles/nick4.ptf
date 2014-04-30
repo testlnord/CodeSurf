@@ -26,7 +26,7 @@ p0.factory.setTerminalVelocityBase(400.0000)
 p0.factory.setTerminalVelocitySpread(0.0000)
 # Point factory parameters
 # Renderer parameters
-p0.renderer.setAlphaMode(BaseParticleRenderer.PRALPHAOUT)
+p0.renderer.setAlphaMode(BaseParticleRenderer.PRALPHAIN)
 p0.renderer.setUserAlpha(1.00)
 # Sprite parameters
 p0.renderer.addTextureFromFile('zero.png')
