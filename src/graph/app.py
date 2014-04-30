@@ -38,9 +38,12 @@ def makeTeleport(xc, yc, zc, xn, yn, zn):
     m = makeTorus(xc, yc, zc, xn, yn, zn)
     m.setColor(0, 1,0 ,1)
     c = loader.loadModel("models/circle.egg")
-    #c.setTransparency(TransparencyAttrib.M_alpha)
-    aur = Shader.load("src/shaders/ps_glowBalloon.cg", Shader.SLCg)
-    m.setShader(aur)
+    c.setTransparency(TransparencyAttrib.M_alpha)
+    #aur = Shader.load("src/shaders/glowBalloon.sha")
+    c.setColor(0.5,0,0,0.5)
+    #m.setShader(aur)
+    #m.setShaderInput("WorldITXf", SceneSetup.getWorldTransform())
+    #m.setShaderInput("WorldXf")
     mysh = Shader.load(Shader.SLGLSL, "src/shaders/def_sl_vertex.glsl","src/shaders/burl.glsl",
                        "src/shaders/def_sl_geom.glsl")
     c.setShader(mysh)
@@ -51,7 +54,7 @@ def makeTeleport(xc, yc, zc, xn, yn, zn):
     c.set_pos(xc, yc, zc)
     c.look_at(xn, yn, zn)
     c.setHpr(c, Vec3(90, 0, 90))
-    c.setColor(0.5,0,0,0.5)
+
     c.setScale(m, 0.35)
     return m,c, time
 
@@ -100,11 +103,19 @@ class App(ShowBase):
 
         self.setupLights()
 
-        #self.addParticles()
+        self.addParticles()
 
-        title = OnscreenText(text="Code visualisation",
+        self.title = OnscreenText(text="Code visualisation",
                      style=1, fg=(1, 1, 1, 1),
                      pos=(-0.2, 0.9), scale=.07)
+
+        self.captionFunctionName = OnscreenText(text="Caption",
+                     style=1, fg=(1, 1, 1, 1),
+                     pos=(0.4, 0.9), scale=.07, mayChange=True)
+
+        self.captionVars = OnscreenText(text="Caption",
+                     style=1, fg=(1, 1, 1, 1),
+                     pos=(0.4, 0.8), scale=.07, mayChange=True)
 
         self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
 
@@ -121,11 +132,12 @@ class App(ShowBase):
     def addParticles(self):
         base.enableParticles()
         self.particles = ParticleEffect()
-        self.particles.loadConfig(Filename('particles/steam.ptf'))
+        self.particles.loadConfig(Filename('particles/nick4.ptf'))
 
         self.particleNodePath = NodePath('gridnode')
         self.particleNodePath.reparentTo(self.camera)
         self.particleNodePath.setPos(0, 10, 0)
+        self.particleNodePath.setHpr(0, 90, 0)
 
         self.particles.setPos(0, 0, 0)
         self.particles.setDepthTest(False)
@@ -168,6 +180,19 @@ class App(ShowBase):
             obj.coord = (x,y,z+0.05)
         self.currentTarget = 0
 
+    def updateCaptionFunctionName(self, text):
+        #self.captionCounter += 1
+        #self.caption.text = str(self.captionCounter)
+        #self.caption.setText("Hello World!")
+        self.captionFunctionName.setText(text)
+
+    def updateCaptionVars(self, text):
+        #self.captionCounter += 1
+        #self.caption.text = str(self.captionCounter)
+        #self.caption.setText("Hello World!")
+        self.captionVars.setText(text)
+
+
     def aimToNextTarget(self):
         self.currentTarget += 1
         if self.currentTarget == len(self.trajectory):
@@ -199,6 +224,9 @@ class App(ShowBase):
         if self.currentTarget == 0:
             self.teleportToNext()
             return Task.cont
+			
+        self.updateCaptionFunctionName(self.trajectory[self.currentTarget].name)
+
 
         self.updateParticles()
 
