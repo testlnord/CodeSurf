@@ -50,6 +50,8 @@ class GraphAlignment:
         self.n = len(self.adj)
         self.points = np.zeros((self.n, 3))
 
+        numpy.random.seed(12343)
+
         for i in range(self.n):
             self.points[i] = numpy.random.random(3)  # vector of 3 random values
 
