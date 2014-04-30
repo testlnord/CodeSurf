@@ -39,10 +39,14 @@ def makeTeleport(xc, yc, zc, xn, yn, zn):
     m.setColor(0, 1,0 ,1)
     c = loader.loadModel("models/circle.egg")
     c.setTransparency(TransparencyAttrib.M_dual)
-    #aur = Shader.load("src/shaders/glowBalloon.sha")
+    aur = Shader.load("src/shaders/glowBalloon.sha")
     c.setColor(0.5,0,0,0.5)
-    #m.setShader(aur)
-    #m.setShaderInput("WorldITXf", SceneSetup.getWorldTransform())
+    m.setShader(aur)
+
+
+    m.setShaderInput("GlowColor", Vec3(0.0,0.0, 0.0))
+    m.setShaderInput("GlowExpon", 0.1)
+    m.setShaderInput("Inflate", 0.1)
     #m.setShaderInput("WorldXf")
     mysh = Shader.load(Shader.SLGLSL, "src/shaders/def_sl_vertex.glsl","src/shaders/burl.glsl",
                        "src/shaders/def_sl_geom.glsl")
