@@ -10,15 +10,13 @@ class Teleport:
 
 
 def get_teleports(steps, graphs):
-    teleports = {}
+    teleports = {name: [] for name in graphs}
     prev = None
     for step in steps:
         if prev is None:
             prev = step
             continue
         if prev.fun != step.fun:
-            if prev.fun not in teleports.keys():
-                teleports[prev.fun] = []
             teleports[prev.fun].append(Teleport(prev.fun,
                                                 step.fun,
                                                 graphs[prev.fun][0][prev.line],
