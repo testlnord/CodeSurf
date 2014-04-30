@@ -4,7 +4,7 @@ import src.gdbrer
 import src.log_parser
 import config
 from src.graph_alignment import align_graph, get_lines
-from src.trajectory import make_trajectory, razdvigator, get_teleports
+from src.trajectory import make_trajectory, razdvigator, get_teleports, get_instructions
 from src.graph.app import App
 
 
@@ -18,11 +18,12 @@ def main():
 
     trajectory = make_trajectory(steps, graphs)
     teleports = get_teleports(steps, graphs)
+    instructions = get_instructions(steps, graphs)
     #lines = []
     app = App()
     for name in graphs:
         l = get_lines(graphs[name][0], graphs[name][1])
-        app.addLines(l, teleports[name])
+        app.addLines(l, teleports[name], instructions[name])
         #lines.extend(l)
 
     #drawLines(lines)

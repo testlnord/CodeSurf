@@ -56,5 +56,31 @@ def make_trajectory(steps, graphs):
 
     return real_steps
 
+
+class Instruction:
+    def __init__(self, x, y, z, text):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.text = text
+
+
+def get_instructions(steps, graphs):
+    instructions = {}
+    prev = None
+    for step in steps:
+        if prev is None:
+            prev = step
+            continue
+        #if prev.fun != step.fun:
+        if step.fun not in instructions.keys():
+            instructions[step.fun] = []
+        (x,y,z ) = graphs[step.fun][0][step.line]
+        instructions[step.fun].append(Instruction(x, y, z,step.line_text ))
+
+        prev = step
+    return instructions
+
+
 def razdvigator(points, i):
     return [(x+i*1000, y, z+1)for (x,y,z) in points]

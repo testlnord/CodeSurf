@@ -153,7 +153,7 @@ class App(ShowBase):
         #self.particles.start(self.particleNodePath)
         #self.particles.setPos(dv*100)
 
-    def addLines(self, lines, teleports):
+    def addLines(self, lines, teleports, instructions):  # instructions : list of objects with fields: (x,y,z, text)
         for line in lines:
             linesegs = LineSegs("lines")
             linesegs.setColor(1, 0.5, 1, 1)

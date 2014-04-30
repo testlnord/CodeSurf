@@ -2,16 +2,17 @@ __author__ = 'arkady'
 # coding : utf-8
 import re
 
+line_code = re.compile(r'^(\d+)\t\s*(.+)$')
 function = re.compile(r'^#\d*\s*(\w*)\s*\(([\w=,\s]*)\)\s*at\s*[\w\.]*:(\d*)$')
 var = re.compile(r'^(\w*)\s*=\s*(\w*)$')
 
 
 class Step:
-    def __init__(self, f, l):
+    def __init__(self, f, l, text):
         self.fun = f
         self.line = l
         self.vars = {}
-
+        self.line_text = text
 
 class func_graph:
     def __init__(self):
@@ -39,9 +40,15 @@ def parse(log_path):
 
     func_graphs = {}
     steps = []
+    lastLine = None
     for line in log_file.readlines():
         if not line:
             continue
+        code_match = line_code.match(line)
+        if code_match:
+            #print line
+            lastLine = line
+        #    continue
         func_match = function.match(line)
         if func_match:
             name = func_match.group(1)+": "+func_match.group(2)
@@ -50,7 +57,7 @@ def parse(log_path):
 
             line_num = int(func_match.group(3))
             func_graphs[name].add(line_num)
-            steps.append(Step(name, func_graphs[name].num(line_num)))
+            steps.append(Step(name, func_graphs[name].num(line_num), lastLine))
 
         else:
             var_match = var.match(line)
