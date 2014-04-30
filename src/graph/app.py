@@ -309,6 +309,7 @@ class App(ShowBase):
         if self.currentTarget == len(self.trajectory):
             self.currentTarget = 0
             print "END OF PROGRAM, START AGAIN"
+            sys.exit(0)
 
     def updateObjects(self, task):
         for tel,t in self.teleports:
