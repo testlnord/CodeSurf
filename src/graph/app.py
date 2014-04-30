@@ -21,6 +21,8 @@ from src.graph import primitives
 cameraSpeed = 0.05
 cameraRotationSpeed = 3
 cameraRotationSpeedEpsilon = 2
+cameraRotationChangeRatio = 0.75
+cameraRotationChangeEpsilon = 1
 
 def makeTorus(xc, yc, zc, xn, yn, zn):
     m = loader.loadModel("models/Torus.egg")
@@ -78,7 +80,6 @@ def makeArc(xc, yc, zc, xn, yn, zn, angleDegrees=360, numSteps=16):
 class App(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
-
         self.trajectory = []
         self.currentTarget = 0
 
@@ -88,6 +89,9 @@ class App(ShowBase):
         self.cameraSpeed = cameraSpeed
         self.cameraRotationSpeed = cameraRotationSpeed
         self.cameraRotationSpeedEpsilon = cameraRotationSpeedEpsilon
+        self.cameraRotationChange = VBase3(0, 0, 0)
+        self.cameraRotationChangeRatio = cameraRotationChangeRatio
+        self.cameraRotationChangeEpsilon = cameraRotationChangeEpsilon
 
         self.camLens.setNear(0.01)
 
@@ -169,6 +173,7 @@ class App(ShowBase):
         if self.currentTarget == len(self.trajectory):
             self.currentTarget = 0
             print "END OF PROGRAM, START AGAIN"
+
     def updateObjects(self, task):
         for tel,t in self.teleports:
 
@@ -191,6 +196,10 @@ class App(ShowBase):
 
 
     def moveCameraTask(self, task):
+        if self.currentTarget == 0:
+            self.teleportToNext()
+            return Task.cont
+
         self.updateParticles()
 
         if self.trajectory[self.currentTarget].t == True:
@@ -231,22 +240,28 @@ class App(ShowBase):
         #    (x2, y2, z2) = self.trajectory[self.currentTarget + 1].coord
 
         currentRotation = VBase3(self.camera.getHpr())
+        oldRotation = currentRotation
         self.camera.lookAt(x, y, z)
         #self.camera.lookAt((x+x2)*0.5, (y+y2)*0.5, (z+z2)*0.5)
         desiredRotation = VBase3(self.camera.getHpr())
         dv = desiredRotation - currentRotation
+        delta = VBase3(0, 0, 0)
 
         if dv.length() > self.cameraRotationSpeedEpsilon:
             if dv.length() > self.cameraRotationSpeed:
                 dv.normalize()
-                currentRotation = currentRotation + dv * self.cameraRotationSpeed
+                #currentRotation = currentRotation + dv * self.cameraRotationSpeed
+                delta = dv * self.cameraRotationSpeed
             else:
                 pass
+                #currentRotation = currentRotation + dv
 
-        self.camera.setHpr(currentRotation)
+        self.cameraRotationChange = (self.cameraRotationChange + delta) * self.cameraRotationChangeRatio
+
+        if self.cameraRotationChange.length() > self.cameraRotationChangeEpsilon:
+            self.camera.setHpr(oldRotation + self.cameraRotationChange)
 
         return Task.cont
-
 
 class Data:
     pass
