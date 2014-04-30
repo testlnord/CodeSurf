@@ -38,7 +38,7 @@ def makeTeleport(xc, yc, zc, xn, yn, zn):
     m = makeTorus(xc, yc, zc, xn, yn, zn)
     m.setColor(0, 1,0 ,1)
     c = loader.loadModel("models/circle.egg")
-    c.setTransparency(TransparencyAttrib.M_alpha)
+    c.setTransparency(TransparencyAttrib.M_dual)
     #aur = Shader.load("src/shaders/glowBalloon.sha")
     c.setColor(0.5,0,0,0.5)
     #m.setShader(aur)
@@ -218,6 +218,7 @@ class App(ShowBase):
 
         (r, g, b) = getColor(self.trajectory[self.currentTarget].name)
         self.setBackgroundColor(r*0.2, g*0.2, b*0.2)
+
 
 
     def moveCameraTask(self, task):
