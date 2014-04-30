@@ -111,11 +111,11 @@ class App(ShowBase):
 
         self.captionFunctionName = OnscreenText(text="Caption",
                      style=1, fg=(1, 1, 1, 1),
-                     pos=(0.4, 0.9), scale=.07, mayChange=True)
+                     pos=(-1, 0.8), scale=.07, mayChange=True, align = TextNode.ALeft)
 
         self.captionVars = OnscreenText(text="Caption",
                      style=1, fg=(1, 1, 1, 1),
-                     pos=(0.4, 0.8), scale=.07, mayChange=True)
+                     pos=(-1, 0.7), scale=.07, mayChange=True, align = TextNode.ALeft)
 
         self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
 
@@ -164,7 +164,7 @@ class App(ShowBase):
         textNode.setText(text)
         textNode.setTextColor(1, 1, 1, 1)
         textNode.setCardColor(0, 0, 0, 0.3)
-        textNode.setCardAsMargin(0.2, 0.2, 0.2, 0.2)
+        textNode.setCardAsMargin(0.4, 0.4, 0.4, 0.4)
         textNode.setCardDecal(True)
         textNode.setWordwrap(15.0)
         textNode.setTabWidth(0.05)
@@ -201,7 +201,6 @@ class App(ShowBase):
             c.reparentTo(self.render)
 
         for instruction in instructions:
-            #(x,y,z,text) = instruction
             self.makeBillboard((instruction.x, instruction.y, instruction.z), instruction.text)
 
 
@@ -213,19 +212,18 @@ class App(ShowBase):
         self.currentTarget = 0
 
     def updateCaptionFunctionName(self, text):
-        #self.captionCounter += 1
-        #self.caption.text = str(self.captionCounter)
-        #self.caption.setText("Hello World!")
-        self.captionFunctionName.setText(text)
+        self.captionFunctionName.setText("current function name: " + text)
 
     def updateCaptionVars(self, text):
-        #self.captionCounter += 1
-        #self.caption.text = str(self.captionCounter)
-        #self.caption.setText("Hello World!")
-        self.captionVars.setText(text)
+        self.captionVars.setText("local Scope: " + text)
 
+    def updateCaptions(self):
+        self.updateCaptionFunctionName(self.trajectory[self.currentTarget].name)
+        if self.trajectory[self.currentTarget].vrs is not None:
+            self.updateCaptionVars(str(self.trajectory[self.currentTarget].vrs))
 
     def aimToNextTarget(self):
+        self.updateCaptions()
         self.currentTarget += 1
         if self.currentTarget == len(self.trajectory):
             self.currentTarget = 0
@@ -258,8 +256,7 @@ class App(ShowBase):
             self.teleportToNext()
             return Task.cont
 			
-        self.updateCaptionFunctionName(self.trajectory[self.currentTarget].name)
-
+        self.updateCaptions()
 
         self.updateParticles()
 
