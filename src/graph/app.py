@@ -1,3 +1,4 @@
+from IPython.lib import backgroundjobs
 from math import pi, sin, cos
 
 from direct.gui.DirectGui import *
@@ -33,6 +34,27 @@ def makeTorus(xc, yc, zc, xn, yn, zn):
 
     return m
 
+
+def skyBox(camera):
+    background = loader.loadModel("models/Square.egg")
+    background.setPos(0,0,0)
+    background.setHpr(0, 90, 0)
+    background.setScale(3.0)
+    mysh = Shader.load(Shader.SLGLSL, "src/shaders/def_sl_vertex.glsl","src/shaders/piu.glsl",
+                       "src/shaders/def_sl_geom.glsl")
+    background.setShader(mysh)
+    background.setShaderInput("time", 0.00)
+    background.setShaderInput("resolution", Vec2(800,800))
+    background.setShaderInput("r",0.7)
+    background.setShaderInput("g",0.7)
+    background.setShaderInput("b",0.7)
+    #background.setColor(1.0,0.0,0,1.0)
+    background.setBin("background", 0)
+    background.setDepthWrite(False)
+    #background.setCompass()
+
+    background.reparentTo(camera)
+    return background
 
 def makeTeleport(xc, yc, zc, xn, yn, zn, r, g, b):
     m = makeTorus(xc, yc, zc, xn, yn, zn)
@@ -83,7 +105,7 @@ class App(ShowBase):
         self.trajectory = []
         self.currentTarget = 0
 
-        self.setBackgroundColor(0, 0, 0.1)
+        #self.setBackgroundColor(0, 0, 0.1)
         self.render.setAntialias(AntialiasAttrib.MPolygon)
 
         self.cameraSpeed = cameraSpeed
@@ -115,6 +137,9 @@ class App(ShowBase):
                      pos=(-1, 0.7), scale=.07, mayChange=True, align = TextNode.ALeft)
 
         self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
+        #sky box
+        self.skybox = skyBox(self.particleNodePath)
+
 
 
     def setupLights(self):
@@ -232,6 +257,7 @@ class App(ShowBase):
         for tel,t in self.teleports:
 
             tel.setShaderInput("time", t+self.time)
+        self.skybox.setShaderInput("time", self.time)
         self.time+=0.1
 
         return task.again
@@ -246,7 +272,10 @@ class App(ShowBase):
         self.camera.lookAt(x, y, z)
 
         (r, g, b) = getColor(self.trajectory[self.currentTarget].name)
-        self.setBackgroundColor(r*0.2, g*0.2, b*0.2)
+        self.skybox.setShaderInput("r",r*0.7)
+        self.skybox.setShaderInput("g",g*0.7)
+        self.skybox.setShaderInput("b",b*0.7)
+        #self.setBackgroundColor(r*0.2, g*0.2, b*0.2)
 
 
 
