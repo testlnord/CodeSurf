@@ -153,6 +153,34 @@ class App(ShowBase):
         #self.particles.start(self.particleNodePath)
         #self.particles.setPos(dv*100)
 
+    def makeBillboard(self, coords, text):
+
+        billboardNode = NodePath('billboardnode')
+        billboardNode.reparentTo(self.render)
+        (x,y,z) = coords
+        billboardNode.setPos(x, y, z + 0.1)
+
+        textNode = TextNode('node name')
+        textNode.setText(text)
+        textNode.setTextColor(1, 1, 1, 1)
+        textNode.setCardColor(0, 0, 0, 0.3)
+        textNode.setCardAsMargin(0.2, 0.2, 0.2, 0.2)
+        textNode.setCardDecal(True)
+        textNode.setWordwrap(15.0)
+        textNode.setTabWidth(0.05)
+        textNode.setAlign(TextNode.ACenter)
+        textNode.setShadow(0.05, 0.05)
+        textNode.setShadowColor(0, 0, 0, 1)
+
+        cardMaker = CardMaker('cardmaker')
+        card = NodePath(cardMaker.generate())
+        tnp = card.attachNewNode(textNode)
+        card.setEffect(DecalEffect.make())
+        tnp.reparentTo(billboardNode)
+        tnp.setPos(-0.004*textNode.getWidth(), 0, 0)
+        tnp.setScale(0.05)
+        billboardNode.setBillboardPointEye()
+
     def addLines(self, lines, teleports, instructions):  # instructions : list of objects with fields: (x,y,z, text)
         for line in lines:
             linesegs = LineSegs("lines")
@@ -171,6 +199,10 @@ class App(ShowBase):
             m.reparentTo(self.render)
             self.teleports.append((c,t))
             c.reparentTo(self.render)
+
+        for instruction in instructions:
+            #(x,y,z,text) = instruction
+            self.makeBillboard((instruction.x, instruction.y, instruction.z), instruction.text)
 
 
     def setTrajectory(self, trajectory):
