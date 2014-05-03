@@ -1,4 +1,3 @@
-from IPython.lib import backgroundjobs
 from math import pi, sin, cos
 
 from direct.gui.DirectGui import *
